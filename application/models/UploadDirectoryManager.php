@@ -16,21 +16,9 @@ class UploadDirectoryManager extends CI_Model
  * @param  The paremeter sent through the form that is relevant to the file. in a post structure format.
  * @return [mixed] return the directory in which to save the file. or false if there is any problem with the operation
  */
-	function getAssignment_submissionDirectory($parameter){
-		if (!isset($parameter['course_assignment_ID'])) {
-			return false;
-		}
-		$asid = $parameter['course_assignment_ID'];
-		loadClass($this->load,'course_assignment');
-		$assignment = new Course_assignment();
-		$assignment->ID = $asid;
-		$result =$assignment->getCourseCode();
-		$result="/".str_replace(' ', "_", $result).'/';
-		return $result;
-	}
 
 	function getAdminDirectory($parameter){
-		$result = "admin/";
+		$result = "admin/profile_pictures/";
 		return $result;
 	}
 }

@@ -31,11 +31,15 @@
 
 		public function onStudent_subject_registrationInserted($data,$type,&$db,&$message){
 			if($type == 'insert'){
-				$query="insert ignore into student_session_history(student_biodata_id,academic_session_id,school_class_id) values(?,?,?)";
-				$param = array($data['student_biodata_id'],$data['academic_session_id'],$data['school_class_id']);
-				if(!$db->query($query,$param)){
-					$message='error occured , please try again';
-					return false;
+				loadClass($this->load,'student_subject_registration');
+				$regExist = $this->student_subject_registration->getWhere(array('student_biodata_id'=>@$data['student_biodata_id'],'academic_session_id'=>@$data['academic_session_id']),$c,0,null,false);
+				if(!$regExist){
+					$query="insert ignore into student_session_history(student_biodata_id,academic_session_id,school_class_id) values(?,?,?)";
+					$param = array($data['student_biodata_id'],$data['academic_session_id'],$data['school_class_id']);
+					if(!$db->query($query,$param)){
+						$message='error occured , please try again';
+						return false;
+					}
 				}
 				return true;
 			}

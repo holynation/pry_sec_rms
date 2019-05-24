@@ -571,28 +571,27 @@ class ModelController extends CI_Controller
 			if (!$this->$model->update($id,$this->db)) {
 				$this->db->trans_rollback();
 				$message="cannot perform update";
-				 echo createJsonMessage('status',false,'message',$message);
+				 echo createJsonMessage('status',false,'message',$message,'flagAction',false);
 				return ;
 			}
-			;
-			$data['ID']=$id;
+		$data['ID']=$id;
 		if($this->DoAfterInsertion($model,'update',$data,$this->db,$message)){
 			$this->db->trans_commit();
 			$message = empty($message)?'operation successfull':$message;
 
-			echo createJsonMessage('status',true,'message',$message);
+			echo createJsonMessage('status',true,'message',$message,'flagAction',true);
 			return;
 		}
 		else{
 			$this->db->trans_rollback();
-			 echo createJsonMessage('status',false,'message',$message);
+			 echo createJsonMessage('status',false,'message',$message,'flagAction',false);
 			return ;
 		}
 		}
 		else{
 
 			$this->db->trans_rollback();
-			 echo createJsonMessage('status',false,'message',$message);
+			 echo createJsonMessage('status',false,'message',$message,'flagAction',false);
 			return ;
 		}
 	}

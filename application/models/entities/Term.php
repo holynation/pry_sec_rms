@@ -51,6 +51,22 @@ function getIs_lastFormField($value=''){
 
 }
 
+ protected function getSession_term(){
+	$query ='SELECT * FROM session_term WHERE term_id=?';
+	$id = $this->array['ID'];
+	$result = $this->db->query($query,array($id));
+	$result =$result->result_array();
+	if (empty($result)) {
+		return false;
+	}
+	include_once('Session_term.php');
+	$resultobjects = array();
+	foreach ($result as  $value) {
+		$resultObject[] = new Session_term($value);
+	}
+	return $resultObject;
+}
+
 
  
 }

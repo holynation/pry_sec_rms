@@ -131,7 +131,7 @@ function getLga_of_originFormField($value=''){
 		if(is_array($fk)){
 			
 			$result ="<div class='form-group'>
-			<label for='school_class_id'>School Class</label>";
+			<label for='school_class_id'>First Entry School Class</label>";
 			$option = $this->loadOption($fk,$value);
 			//load the value from the given table given the name of the table to load and the display field
 			$result.="<select name='school_class_id' id='school_class_id' class='form-control'>
@@ -334,10 +334,10 @@ public function getStudentResult($session)
 	return $result;
 }
 
-public function getRegistration($session)
+public function getRegistration($session,$term)
 {
-	$query="select student_subject_registration.ID,subject_title from student_subject_registration join subject on subject.id=student_subject_registration.subject_id where student_biodata_id=? and student_subject_registration.academic_session_id=? order by subject_title asc";
-	$result = $this->query($query,array($this->ID,$session));
+	$query="select student_subject_registration.ID,subject_title from student_subject_registration join subject on subject.id=student_subject_registration.subject_id where student_biodata_id=? and student_subject_registration.academic_session_id=? and student_subject_registration.term_id = ? order by subject_title asc";
+	$result = $this->query($query,array($this->ID,$session,$term));
 	return $result;
 }
 
@@ -358,7 +358,7 @@ public function getStudentIn($level,$session)
 
 public function countGetStudentIn($level,$session)
 {
-	$query="select count(*) as num from student_biodata join student_session_history on student_biodata.id=student_session_history.student_biodata_id where student_session_history.school_class_id=? and student_session_history.academic_session_id=?";
+	$query="SELECT count(*) as num from student_biodata join student_session_history on student_biodata.id=student_session_history.student_biodata_id where student_session_history.school_class_id=? and student_session_history.academic_session_id=?";
 	$result = $this->query($query,array($level,$session));
 	return ($result[0]['num']) ? $result[0]['num'] : 0;
 }

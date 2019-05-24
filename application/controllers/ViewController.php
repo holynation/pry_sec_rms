@@ -156,7 +156,7 @@ class ViewController extends CI_Controller{
 
   private function adminStudent_registration(&$data)
   {
-    if (@$_GET['l'] && $_GET['session']) {
+    if (@$_GET['l'] && $_GET['session'] && @$_GET['term']) {
       loadClass($this->load,'student_biodata');
       $students=array();
       if (@$_GET['reg']) {
@@ -172,7 +172,7 @@ class ViewController extends CI_Controller{
       }
 
       foreach ($students as $student) {
-        $result[]=array($student,$student->getRegistration($_GET['session']));
+        $result[]=array($student,$student->getRegistration($_GET['session'],$_GET['term']));
       }
 
       loadClass($this->load,'academic_session');
@@ -183,9 +183,14 @@ class ViewController extends CI_Controller{
       $this->school_class->ID=$_GET['l'];
       $this->school_class->load();
       $levelName=$this->school_class->class_name;
+      loadClass($this->load,'term');
+      $this->term->ID = $_GET['term'];
+      $this->term->load();
+      $termName = $this->term->term_name;
       $data['sessionName'] = $sessionName;
+      $data['termName'] = $termName; 
       $data['className'] = $levelName;
-      $data['header']=$levelName.' Class '.$sessionName;
+      $data['header']=$levelName.' Class '.$sessionName .'('.$termName.' term)';
       $data['result']=$result;
     }
   }

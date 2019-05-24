@@ -87,10 +87,10 @@ function getCa_score1FormField($value = ''){
 
 protected function getStudent_subject_registration(){
 	$query ='SELECT * FROM student_subject_registration WHERE id=?';
-	if (!isset($this->array['ID'])) {
+	if (!isset($this->array['student_subject_registration_id'])) {
 		return null;
 	}
-	$id = $this->array['ID'];
+	$id = $this->array['student_subject_registration_id'];
 	$result = $this->db->query($query,array($id));
 	$result = $result->result_array();
 	if (empty($result)) {

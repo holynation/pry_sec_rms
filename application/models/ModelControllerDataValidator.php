@@ -47,14 +47,15 @@ class ModelControllerDataValidator extends CI_Model
 		# check 
 		loadClass($this->load,'session_term');
 		$student = $data['student_biodata_id'];
-		$sessionTerm = @$data['session_term_id'];
 		$session= $data['academic_session_id'];
-		if (!$session || !$sessionTerm || !$student) {
+		$term = $data['term_id'];
+		if (!$session || !$student || !$term) {
 			$message='error occured some data appeared not to be available, kindly refresh the page and try again';
 			return false;
 		}
-		$this->session_term->ID=$sessionTerm;
-		$data['term_id']=$this->session_term->term->ID;
+		$temp = $this->session_term->getWhere(array('term_id'=>$term),$c,0,null,false);
+		$temp = @$temp[0];
+		$data['session_term_id']=$temp->ID;
 		return true;
 	}
 }

@@ -297,8 +297,9 @@ public function getModules()
 			'children'=>array(
 				'Student Register' => 'vc/admin/student_registration',
 				'Student Result'=>'vc/admin/student_result',
-				'Student Report'=>'vc/admin/result_option',
-				'Configure Report' => 'vc/add/configure_report'
+				'Configure Report' => 'vc/add/configure_report',
+				'Student Report'=>'vc/admin/result_option'
+				
 			)
 		)
 	);

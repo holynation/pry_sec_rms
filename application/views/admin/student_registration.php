@@ -35,28 +35,35 @@ include "template/sidebar.php";
         <br>
           <form>
               <div class="row">
-              <div class="form-group  col-md-4">
+              <div class="form-group  col-md-3">
                   <label for="">Academic Session</label>
                   <select class="form-control" name="session" id="session" required="">
                       <option value="" >..select session</option>
                       <?php echo buildOptionFromQuery($this->db,'select id,session_name as value from academic_session order by session_name desc'); ?>
                   </select>
               </div>
-              <div class="form-group  col-md-4">
+              <div class="form-group  col-md-3">
+                <label for="">Term</label>
+                <select class="form-control" name="term" id="term" required="">
+                    <option value="" >..select term</option>
+                    <?php echo buildOptionFromQuery($this->db,'select id,term_name as value from term order by id asc'); ?>
+                </select>
+              </div>
+              <div class="form-group  col-md-3">
                   <label for="">School class</label>
                   <select class="form-control autoload" data-child='reg' data-load='studentAll' data-depend='session' name="l" id="class" required=""> 
                       <option value="">..select class..</option>
                       <?php echo buildOptionFromQuery($this->db,'select id,class_name as value from school_class'); ?>
                   </select>
               </div>
-              <div class="form-group  col-md-4">
+              <div class="form-group  col-md-3">
                   <label for="">Student</label>
                   <select name="reg" id="reg" class="form-control">
                     <option value="">..select student...</option>
                   </select>
               </div>
               </div>
-              <input type="submit" value="Load Subject" class="btn btn-primary pull-right" />
+              <input type="submit" value="Load Register" class="btn btn-primary pull-right" />
               <div class="clearfix"></div>
 
               </div>
@@ -103,7 +110,7 @@ include "template/sidebar.php";
                     $std = $this->student_biodata->getWhere(array('registration_number'=>$_GET['reg']),$c,0,null,false);
                     $std =@$std[0];
                     $formContent= $this->modelFormBuilder->start('registration_table')
-                    ->appendInsertForm('student_subject_registration',true,array('academic_session_id'=>$_GET['session'],'student_biodata_id'=>$std->ID))
+                    ->appendInsertForm('student_subject_registration',true,array('academic_session_id'=>$_GET['session'],'student_biodata_id'=>$std->ID,'term_id'=>$_GET['term']))
                     ->addSubmitLink()
                     ->appendSubmitButton("Add",'btn btn-success')
                     ->build();
@@ -114,7 +121,7 @@ include "template/sidebar.php";
                         <div class="modal-header">
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span></button>
-                          <h4 class="modal-title">Enter Course Registration for <b><?php echo $_GET['reg'].' ('. @$className .' '.@$sessionName .')'; ?></b></h4>
+                          <h4 class="modal-title">Enter Subject Reg for <b><?php echo $_GET['reg'].' ('. @$className .' '.@$sessionName .' '.$termName. ' Term'.')'; ?></b></h4>
                         </div>
                         <div class="modal-body">
                           <p>
