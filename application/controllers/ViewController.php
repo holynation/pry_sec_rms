@@ -142,13 +142,13 @@ class ViewController extends CI_Controller{
 
   private function adminStudent_result(&$data)
   {
-    if (isset($_GET['reg']) && $_GET['reg'] && isset($_GET['session']) && $_GET['session']) {
+    if (isset($_GET['reg']) && $_GET['reg'] && isset($_GET['session']) && $_GET['session'] && isset($_GET['term']) && $_GET['term']) {
       loadClass($this->load,'student_biodata');
       $student = $this->student_biodata->getWhere(array('registration_number'=>$_GET['reg']),$c,0,null,false);
       if($student){
         $student = @$student[0];
         $data['student']=$student;
-        $data['result']=$student->getStudentResult($_GET['session']);
+        $data['result']=$student->getStudentResult($_GET['session'],$_GET['term']);
       }
       
     }

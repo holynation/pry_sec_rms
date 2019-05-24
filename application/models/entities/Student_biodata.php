@@ -326,11 +326,12 @@ public function getStudentRegisteringLevel($session)
 }
 
 //return the student result for a particular session
-public function getStudentResult($session)
+public function getStudentResult($session,$term)
 {
 	$session = $this->db->conn_id->escape_string($session);
-	$query ="SELECT DISTINCT subject_score.ID, subject_title,ca_score1,ca_score2,exam_score,score,grade,point from student_subject_registration join subject sub on sub.id= student_subject_registration.subject_id join upload_history on upload_history.subject_id=sub.id and upload_history.academic_session_id=$session join subject_score on student_subject_registration.id = subject_score.student_subject_registration_id  left join grade_scale on score between min_score and max_score where student_subject_registration.academic_session_id=? and student_biodata_id=? order by subject_title asc";
-	$result = $this->query($query,array($session,$this->ID));
+	$term = $this->db->conn_id->escape_string($term);
+	$query ="SELECT DISTINCT subject_score.ID, subject_title,ca_score1,ca_score2,exam_score,score,grade,point from student_subject_registration join subject sub on sub.id= student_subject_registration.subject_id join upload_history on upload_history.subject_id=sub.id and upload_history.academic_session_id=$session join subject_score on student_subject_registration.id = subject_score.student_subject_registration_id  left join grade_scale on score between min_score and max_score where student_subject_registration.academic_session_id=? and student_biodata_id=? and student_subject_registration.term_id = ? order by subject_title asc";
+	$result = $this->query($query,array($session,$this->ID,$term));
 	return $result;
 }
 

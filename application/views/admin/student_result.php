@@ -42,21 +42,28 @@ include "template/sidebar.php";
         <br>
           <form>
               <div class="row">
-              <div class="form-group col-sm-4 col-md-4">
+              <div class="form-group col-sm-3 col-md-3">
                   <label for="">Academic Session</label>
                   <select class="form-control" name="session" id="session" required="">
-                      <option value="" >..select session</option>
+                      <option value="" >..select session..</option>
                       <?php echo buildOptionFromQuery($this->db,'select id,session_name as value from academic_session order by session_name desc'); ?>
                   </select>
               </div>
-              <div class="form-group col-sm-4 col-md-4">
+              <div class="form-group col-sm-3 col-md-3">
+                  <label for="">Term</label>
+                  <select class="form-control" name="term" id="term" required="">
+                      <option value="" >..select term..</option>
+                      <?php echo buildOptionFromQuery($this->db,'select id,term_name as value from term order by id asc'); ?>
+                  </select>
+              </div>
+              <div class="form-group col-sm-3 col-md-3">
                   <label for="">School Class</label>
                   <select class="form-control autoload" data-child='reg' data-load='studentIn' data-depend='session' name="l" id="class" required=""> 
                       <option value="">..select class..</option>
                       <?php echo buildOptionFromQuery($this->db,'select id,class_name as value from school_class'); ?>
                   </select>
               </div>
-              <div class="form-group col-sm-4 col-md-4">
+              <div class="form-group col-sm-3 col-md-3">
                   <label for="">Student</label>
                   <select name="reg" id="reg" class="form-control">
                     <option value="">..select student...</option>
