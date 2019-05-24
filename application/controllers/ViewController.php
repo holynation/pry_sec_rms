@@ -216,7 +216,7 @@ class ViewController extends CI_Controller{
     $data['totalStudent'] = $this->student_biodata->countGetStudentIn($level,$session);
     $content=array();
     foreach ($students as $student) {
-      $content[]=array('student'=>$student,'report'=>$this->adminData->getStudentResultData($student,$sess,$sessionTerm,$level,$extraReport),'extraReport'=>@$extraReport);
+      $content[]=array('student'=>$student,'report'=>$this->adminData->getStudentResultData($student,$sess,$sessionTerm,$level,$extraReport,$resultCount,$totalPercentage),'extraReport'=>@$extraReport,'resultCount'=>@$resultCount,'totalPercentage'=>@$totalPercentage);
     }
     // print_r($content);exit;
     $data['reports']=$content;
@@ -237,6 +237,23 @@ class ViewController extends CI_Controller{
     $session =$this->session_term->academic_session->ID;
     $result = $this->upload_history->getDisplayHistory($course,$session,$class);
     $data['uploadHistory']=$result;
+  }
+
+  public function studentProfile(&$data)
+  {
+    if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
+      $this->admin('profile',$data);
+      if (!isset($data['id']) || !$data['id']) {
+        show_404();exit;
+      }
+      loadClass($this->load,'student_biodata');
+      $std = new Student_biodata(array('ID'=>$data['id']));
+      if (!$std->load()) {
+        show_404();exit;
+      }
+      $data['student']=$std;
+    }
+    
   }
 
   //function for loading edit page for general application

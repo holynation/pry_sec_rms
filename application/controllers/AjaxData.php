@@ -87,7 +87,16 @@
 			//the escaping is to prevent sql injection attack
 			$class = $this->db->conn_id->escape_string($class);
 			$session = $this->db->conn_id->escape_string($session);
-			$query="SELECT student.registration_number as id, registration_number as value from student_biodata student join student_session_history on student.id=student_session_history.student_biodata_id where student_session_history.school_class_id=$class and student_session_history.academic_session_id=$session and student.school_class_id = $class order by student.registration_number asc";
+			$query="SELECT student.registration_number as id, concat_ws(' ',surname,' ',firstname,' ',middlename,' (',registration_number,')') as value from student_biodata student join student_session_history on student.id=student_session_history.student_biodata_id where student_session_history.school_class_id=$class and student_session_history.academic_session_id=$session and student.school_class_id = $class order by student.registration_number asc";
+			echo $this->returnJsonFromQueryResult($query,array($class,$session));
+
+		}
+		public function studentAll($class,$session,$sessionTerm='')
+		{
+			//the escaping is to prevent sql injection attack
+			$class = $this->db->conn_id->escape_string($class);
+			$session = $this->db->conn_id->escape_string($session);
+			$query="SELECT student.registration_number as id, concat_ws(' ',surname,' ',firstname,' ',middlename,' (',registration_number,')') as value from student_biodata student where student.school_class_id = $class order by student.registration_number asc";
 			echo $this->returnJsonFromQueryResult($query,array($class,$session));
 
 		}

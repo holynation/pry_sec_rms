@@ -69,7 +69,7 @@ include "template/sidebar.php";
               </div>
               
           </form>
-          <?php if (@$result): ?>
+          <?php //if (@$result): ?>
             
           <div>
             <?php if (@$student): ?>
@@ -154,7 +154,7 @@ include "template/sidebar.php";
             <?php endif; ?>
           </div>
           <!-- show the table here -->
-          <?php endif; ?>
+          <?php //endif; ?>
 
       </div>
       <div>

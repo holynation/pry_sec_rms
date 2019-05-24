@@ -44,7 +44,7 @@ include "template/sidebar.php";
               </div>
               <div class="form-group  col-md-4">
                   <label for="">School class</label>
-                  <select class="form-control autoload" data-child='reg' data-load='studentIn' data-depend='session' name="l" id="class" required=""> 
+                  <select class="form-control autoload" data-child='reg' data-load='studentAll' data-depend='session' name="l" id="class" required=""> 
                       <option value="">..select class..</option>
                       <?php echo buildOptionFromQuery($this->db,'select id,class_name as value from school_class'); ?>
                   </select>
@@ -56,7 +56,7 @@ include "template/sidebar.php";
                   </select>
               </div>
               </div>
-              <input type="submit" value="Load Registration" class="btn btn-primary pull-right" />
+              <input type="submit" value="Load Subject" class="btn btn-primary pull-right" />
               <div class="clearfix"></div>
 
               </div>

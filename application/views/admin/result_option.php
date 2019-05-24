@@ -39,9 +39,6 @@ include "template/sidebar.php";
           </div>
         <?php endif ?>
         
-        <div class="alert alert-info">
-              Note: if no session is selected, the current session will be used to load student report
-          </div><br>
           <div class="alert alert-info">
             Note: if registration number is not selected , report is generated for all the student that matches the filter settings.It is highly recommended to load report by registration number for speed and performance sake.
           </div>
@@ -49,7 +46,7 @@ include "template/sidebar.php";
               <div class="row">
               <div class="form-group col-sm-3 col-md-3">
                   <label for="">Academic Session</label>
-                  <select class="form-control" name="session" id="session" required="">
+                  <select class="form-control" name="session" id="session">
                       <option value="" >..select session</option>
                       <?php echo buildOptionFromQuery($this->db,'select id,session_name as value from academic_session order by session_name desc'); ?>
                   </select>

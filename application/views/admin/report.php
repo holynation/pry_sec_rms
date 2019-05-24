@@ -30,8 +30,10 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
       $reportData=$report['report'];
       $student = $report['student'];
       $extraReport = $report['extraReport'];
+      $resultCount = $report['resultCount'];
+      $totalPercentage = $report['totalPercentage'];
     ?>
-  <section class="content">
+  <section class="content" style="page-break-after: always;">
     <div style="background: white;">
       <!-- this is the beginning of the header report -->
         <div class="table-header">
@@ -104,7 +106,7 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
                            </tr>
                            <tr>
                               <td style="padding-left: 10px;">Percentage</td>
-                              <td style="padding: 0 10px;"></td>
+                              <td style="padding: 0 10px;"><?php echo $totalPercentage .'%'; ?></td>
                            </tr>
                        </table>
                    </div>
@@ -130,6 +132,13 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
                   </tr>
               </table>
             </td>
+            <td>
+              <div>
+                <td style="text-align: right;">
+                  <img src="<?php echo base_url($student->img_path); ?>" alt="student pic" width='150px' height='150px' style="margin-left: 50px;margin-top: -25px;">
+                </td>
+              </div>
+            </td>
           </tr>
         </table>
       </div>
@@ -138,6 +147,7 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
             $cummCa2 = 0;
             $cummExam = 0;
             $cummTotal = 0;
+            $cummPer = 0;
        ?>
       <div>
         <div style="margin-bottom: 25px;">

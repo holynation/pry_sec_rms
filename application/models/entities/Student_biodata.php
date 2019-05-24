@@ -24,7 +24,7 @@ static $labelArray = array('ID' => '','surname' => '','firstname' => '','middlen
 static $defaultArray = array('status' => '1');
  // populate this array with fields that are meant to be displayed as document in the format array("fieldname"=>array('type'=>array('jpeg','jpg','png','gif'),'size'=>'1048576','directory'=>'pastDeans/','preserve'=>false,'max_width'=>'1000','max_height'=>'500'))
 //the folder to save must represent a path from the basepath. it should be a relative path,preserve filename will be either true or false. when true,the file will be uploaded with it default filename else the system will pick the current user id in the session as the name of the file.The max_width and max_height is use to check the dimension of upload files.By default,it value is 0 respectively.
-static $documentField = array(); //array containing an associative array of field that should be regareded as document field. it will contain the setting for max size and data type.;
+static $documentField = array('img_path'=>array('type'=>array('jpeg','jpg','png','gif'),'size'=>'1048576','directory'=>'student/','preserve'=>false,'max_width'=>'500','max_height'=>'450')); //array containing an associative array of field that should be regareded as document field. it will contain the setting for max size and data type.;
 static $relation = array('school_class' => array('school_class_id','id')
 ,'academic_session' => array('academic_session_id','id')
 );
@@ -171,7 +171,7 @@ function getEntry_mode_idFormField($value=''){
 		if(is_array($fk)){
 			
 			$result ="<div class='form-group'>
-			<label for='academic_session_id'>Academic Session Id</label>";
+			<label for='academic_session_id'>Academic Session</label>";
 			$option = $this->loadOption($fk,$value,'','order by id desc');
 			//load the value from the given table given the name of the table to load and the display field
 			$result.="<select name='academic_session_id' id='academic_session_id' class='form-control'>
@@ -182,8 +182,10 @@ function getEntry_mode_idFormField($value=''){
 		return $result;
 }
 function getImg_pathFormField($value=''){
+	$logo= base_url($value);
 	return "<div class='form-group'>
-	<label for='img_path' >Student Image</label>
+	<img src='$logo' alt='student pic' width='200px'/> <br>
+	<label for='img_path' >Student Profile</label>
 		<input type='file' name='img_path' id='img_path' value='$value' class='form-control'  />
 </div> ";
 
@@ -367,19 +369,33 @@ public function getSpentSessionTill($session)
 	return $this->query($query,array($session,$this->ID));
 }
 
-public function getStudentResultPerTerm($session,$sessionTerm)
+public function getStudentResultPerTerm($session,$sessionTerm,&$resultCount=0)
 {
 	$session = $this->db->conn_id->escape_string($session);
 	$sessionTerm = $this->db->conn_id->escape_string($sessionTerm);
-	$query ="SELECT DISTINCT subject_score.ID, subject_title,ca_score1,ca_score2,exam_score,score,grade,point from student_subject_registration join subject sub on sub.id= student_subject_registration.subject_id join upload_history on upload_history.subject_id=sub.id and upload_history.academic_session_id=$session join subject_score on student_subject_registration.id = subject_score.student_subject_registration_id  left join grade_scale on score between min_score and max_score where student_subject_registration.academic_session_id=? and student_subject_registration.term_id = ? and student_biodata_id=? order by subject_title asc";
+	$query ="SELECT DISTINCT subject_score.ID,subject_title,ca_score1,ca_score2,exam_score,score,grade,point from student_subject_registration join subject sub on sub.id= student_subject_registration.subject_id join upload_history on upload_history.subject_id=sub.id and upload_history.academic_session_id=$session join subject_score on student_subject_registration.id = subject_score.student_subject_registration_id  left join grade_scale on score between min_score and max_score where student_subject_registration.academic_session_id=? and student_subject_registration.term_id = ? and student_biodata_id=? order by subject_title asc";
 	$result = $this->query($query,array($session,$sessionTerm,$this->ID));
+	$resultCount = ($result) ? count($result) : 0;
 	return $result;
 }
 
-public function getResultData($session,$sessionTerm)
+public function getTotalPercentageScore($session,$sessionTerm,$resultCount)
+{
+	$totalScore = 0;
+	$resultScore = $this->getStudentResultPerTerm($session,$sessionTerm,$resultCount);
+	foreach($resultScore as $score){
+		$totalScore +=$score['score'];
+	}
+	$generalScore = floatval(100 * @$resultCount);
+	$result= number_format(($totalScore/$generalScore) * 100);
+	return $result;
+}
+
+public function getResultData($session,$sessionTerm,&$resultCount=0,&$totalPercentage)
 {
 	$result=array();
-	$result['result']=$this->getStudentResultPerTerm($session,$sessionTerm);
+	$result['result']=$this->getStudentResultPerTerm($session,$sessionTerm,$resultCount);
+	$totalPercentage = $this->getTotalPercentageScore($session,$sessionTerm,$resultCount);
 	return $result;
 }
 
@@ -394,6 +410,15 @@ public function getStudentDistributionByClass()
 	$query ="select class_name, count(student_biodata.id) as total from student_biodata join school_class on school_class.id = student_biodata.school_class_id group by class_name";
 	$result = $this->query($query);
 	return $result;
+}
+public function loadReport($session,$class,$term)
+{
+	loadClass($this->load,'configure_report');
+	$reportList = $this->configure_report->getConfig($session,$class,$term,$this->ID);
+	if (!@$reportList) {
+		return "";
+	}
+	return $reportList;
 }
 
 

@@ -13,7 +13,7 @@
 			// $this->load->library('hash_created');
 		}
 
-		public function onadminInserted($data,$type,&$db,&$message)
+		public function onAdminInserted($data,$type,&$db,&$message)
 		{
 			//remember to remove the file if an error occured here
 			//the user type should be student_biodata
@@ -27,6 +27,18 @@
 				return false;
 			}
 			return true;
+		}
+
+		public function onStudent_subject_registrationInserted($data,$type,&$db,&$message){
+			if($type == 'insert'){
+				$query="insert ignore into student_session_history(student_biodata_id,academic_session_id,school_class_id) values(?,?,?)";
+				$param = array($data['student_biodata_id'],$data['academic_session_id'],$data['school_class_id']);
+				if(!$db->query($query,$param)){
+					$message='error occured , please try again';
+					return false;
+				}
+				return true;
+			}
 		}
 
 		public function onSubject_scoreInserted($data,$type,&$db,&$message)

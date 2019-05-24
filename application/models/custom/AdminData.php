@@ -24,24 +24,14 @@ class AdminData extends CI_Model
 		return $result;
 	}
 
-	public function loadReport($session,$class,$term)
-	{
-		loadClass($this->load,'configure_report');
-		$reportList = $this->configure_report->getConfig($session,$class,$term);
-		if (!@$reportList) {
-			return "";
-		}
-		return $reportList;
-	}
-
-	public function getStudentResultData($student,$endSession,$sessionTerm,$class,&$extraReport)
+	public function getStudentResultData($student,$endSession,$sessionTerm,$class,&$extraReport,&$resultCount=0,&$totalPercentage)
 	{
 		loadClass($this->load,'student_session_history');
 		$allstudentSession = $student->getSpentSessionTill($endSession);
 		$result = array();
-		$extraReport = $this->loadReport($endSession,$class,$sessionTerm);
+		$extraReport = $student->loadReport($endSession,$class,$sessionTerm,$student);
 		foreach ($allstudentSession as $session){
-			$result[$session['session_name']]=$student->getResultData($session['ID'],$sessionTerm);
+			$result[$session['session_name']]=$student->getResultData($session['ID'],$sessionTerm,$resultCount,$totalPercentage);
 		}
 		return $result;
 	}
