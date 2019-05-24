@@ -42,7 +42,7 @@ include "template/sidebar.php";
           <div class="alert alert-info">
             Note: if registration number is not selected , report is generated for all the student that matches the filter settings.It is highly recommended to load report by registration number for speed and performance sake.
           </div>
-          <form action="<?php echo base_url('vc/admin/report') ?>">
+          <form action="<?php echo base_url('vc/admin/report'); ?>">
               <div class="row">
               <div class="form-group col-sm-3 col-md-3">
                   <label for="">Academic Session</label>
