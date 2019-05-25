@@ -4,7 +4,7 @@
 */
 class WebSessionManager extends CI_Model
 {
-   private $defaultType = array("admin","lecturer");
+   private $defaultType = array("admin");
 	// private $defaultRole = array('applicant','student','lecturer','staff');
 	function __construct()
 	{
@@ -166,28 +166,6 @@ class WebSessionManager extends CI_Model
          $result->load();
          return $result;
    	}
-
-      function getNameInitial($userId=''){
-         $user='';
-         if($userId != ''){
-            $user = $this->getCurrentLecturer($userId);
-         }else{
-            $user = $this->isCurrentUserType('lecturer');
-         }
-
-         $surname = ucfirst($user->surname);
-         $firstname = ucfirst(getFirstString($user->firstname));
-         $middlename = ucfirst(getFirstString($user->middlename));
-         return $surname .", ".$firstname .". ".$middlename.".";
-      }
-
-      function getCurrentLecturer($id){
-         loadClass($this->load,'lecturer');
-         $className = ucfirst('lecturer');
-         $result = new $className(array('ID'=>$id));
-         $result->load();
-         return $result;
-      }
 
    	function getUserDisplayName(){
          return $this->getCurrentUserProp('firstname').' '.$this->getCurrentUserProp('lastname');

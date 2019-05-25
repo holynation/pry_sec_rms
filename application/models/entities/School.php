@@ -17,9 +17,9 @@ static $uploadDependency = array();
 static $displayField = 'school_name';// this display field properties is used as a column in a query if a their is a relationship between this table and another table.In the other table, a field showing the relationship between this name having the name of this table i.e something like this. table_id. We cant have the name like this in the table shown to the user like table_id so the display field is use to replace that table_id.However,the display field name provided must be a column in the table to replace the table_id shown to the user,so that when the other model queries,it will use that field name as a column to be fetched along the query rather than the table_id alone.;
 static $uniqueArray = array();
 /* this is an associative array containing the fieldname and the type of the field*/ 
-static $typeArray = array('school_name' => 'varchar','school_logo' => 'varchar','slogan' => 'text','location' => 'text','description' => 'text','school_website' => 'varchar','school_mail' => 'varchar','telephone1' => 'varchar','telephone2' => 'varchar');
+static $typeArray = array('school_name' => 'varchar','school_report_first_header'=>'varchar','school_report_second_header'=>'varchar','school_logo' => 'varchar','slogan' => 'text','location' => 'text','description' => 'text','school_website' => 'varchar','school_mail' => 'varchar','telephone1' => 'varchar','telephone2' => 'varchar');
 /*this is a dictionary that map a field name with the label name that will be shown in a form*/ 
-static $labelArray = array('ID' => '','school_name' => '','school_logo' => '','slogan' => '','location' => '','description' => '','school_website' => '','school_mail' => '','telephone1' => '','telephone2' => '');
+static $labelArray = array('ID' => '','school_name' => '','school_report_first_header'=>'','school_report_second_header'=>'','school_logo' => '','slogan' => '','location' => '','description' => '','school_website' => '','school_mail' => '','telephone1' => '','telephone2' => '');
 /*associative array of fields that have default value*/ 
 static $defaultArray = array();
  // populate this array with fields that are meant to be displayed as document in the format array("fieldname"=>array('type'=>array('jpeg','jpg','png','gif'),'size'=>'1048576','directory'=>'pastDeans/','preserve'=>false,'max_width'=>'1000','max_height'=>'500'))
@@ -37,7 +37,19 @@ function getSchool_nameFormField($value = ''){
 				<label for='school_name'>School Name</label>
 				<input type='text' name='school_name' id='school_name' value='$value' class='form-control' required />
 			</div>";
-} 
+}
+function getSchool_report_first_headerFormField($value = ''){
+	return "<div class='form-group'>
+				<label for='school_report_first_header'>School Report First Header</label>
+				<input type='text' name='school_report_first_header' id='school_report_first_header' value='$value' class='form-control' required />
+			</div>";
+}
+function getSchool_report_second_headerFormField($value = ''){
+	return "<div class='form-group'>
+				<label for='school_report_second_header'>School Report Second Header</label>
+				<input type='text' name='school_report_second_header' id='school_report_second_header' value='$value' class='form-control' required />
+			</div>";
+}
  function getSchool_logoFormField($value = ''){
 	$logo= base_url($value);
 	return "<div class='form-group'>

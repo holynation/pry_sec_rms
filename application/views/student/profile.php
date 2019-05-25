@@ -148,8 +148,7 @@ if ($userType=='admin') {
     
     <!-- /.content -->
   </div>
- <?php include "template/footer.php" ?>
- <script>
+<script>
    function addMoreEvent() {
      $('.showupload').click(function(event) {
        $(this).hide();
@@ -161,8 +160,10 @@ if ($userType=='admin') {
       submitAjaxForm($(this));
      });
    }
-function ajaxFormSuccess(target,data) {
-  reportAndRefresh(target,data);
-}
- </script>
+    function ajaxFormSuccess(target,data) {
+      console.log(`got here profile: ${data}`);
+      reportAndRefresh(target,data,'flagAction',3000);
+    }
+</script>
+ <?php include "template/footer.php" ?>
  

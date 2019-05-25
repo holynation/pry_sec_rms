@@ -45,12 +45,12 @@ class FormConfig extends CI_Model
 				'submit_label'=>'Save',
 				'table_exclude'=>array('img_path'),
 				'table_action'=>array('delete'=>'delete/student_biodata','edit'=>'edit/student_biodata','profile'=>'vc/student/profile'),
-				'search'=>array('firstname','middlename','surname'),
-				'query'=>"select distinct student.ID,surname,firstname,middlename,(select session_name from academic_session where id=student.academic_session_id) as entry_session,state_of_origin,lga_of_origin,dob as date_of_birth,email,phone_number,gender,address,registration_number from student_biodata student left join school_class on school_class.id= student.school_class_id "
+				'search'=>array('firstname','middlename','surname','registration_number'),
+				'query'=>"select distinct student.ID,surname,firstname,middlename,(select session_name from academic_session where id=student.academic_session_id) as entry_session,state_of_origin,lga_of_origin,dob as date_of_birth,email,phone_number,gender,address,registration_number from student_biodata student left join school_class on school_class.id= student.school_class_id left join student_session_history on student.id=student_session_history.student_biodata_id left join academic_session on academic_session.id=student_session_history.academic_session_id "
 			),
 			'admin'=>array
 			(
-				'search'=>array('firstname','lastname','middlename','email','phone_number')
+				'search'=>array('firstname','lastname','middlename')
 			),
 			'subject'=>array
 			(
@@ -59,6 +59,9 @@ class FormConfig extends CI_Model
 			),
 			'role'=>array(
 				'query'=>'select * from role where ID<>1'
+			),
+			'configure_report' => array(
+				'table_title' => 'Configuration Report Table'
 			)
 		//add new entry to this array
 		);

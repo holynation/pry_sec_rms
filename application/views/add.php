@@ -54,10 +54,7 @@ $where .= ' order by ID desc ';
    else{
      $tableData= $this->tableViewModel->getTableHtml($model,$count,$tableExclude,$tableAction,true,0,null,true,$where);
    }
-// include "template/header.php";
-// include "template/sidebar.php";
  ?>
-
 
  <!-- the breadcrump for pages that needed it -->
  <!-- Content Wrapper. Contains page content -->
@@ -101,7 +98,7 @@ $where .= ' order by ID desc ';
               </div>
               <div class="modal-body">
                 <p>
-                  <?php echo $formContent ?>
+                  <?php echo $formContent; ?>
                 </p>
               </div>
             </div>
@@ -147,8 +144,7 @@ $where .= ' order by ID desc ';
                   <form method="post" action="<?php echo base_url('mc/sFile/'.$model); ?>" enctype="multipart/form-data">
                   <div class="form-group">
                     <input type="file" name="bulk-upload" class="form-control">
-                    <input type="hidden" name="MAX_FILE_SIZE" value="300000"> 
-                    
+                    <input type="hidden" name="MAX_FILE_SIZE" value="200000">
                   </div>
                    <div class="form-group">
                       <input type="submit" class='btn btn-success' name="submit" value="Upload">
@@ -244,12 +240,12 @@ $where .= ' order by ID desc ';
           location.reload();
         }
     });
-      $('.close').click(function(event) {
-        if (inserted) {
-          inserted = false;
-          location.reload();
-        }
-      });
+    $('.close').click(function(event) {
+      if (inserted) {
+        inserted = false;
+        location.reload();
+      }
+    });
       $('li[data-ajax-edit=1] a').click(function(event){
         event.preventDefault();
         var link = $(this).attr('href');

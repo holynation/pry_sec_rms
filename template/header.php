@@ -38,9 +38,9 @@ $base=base_url('assets/')
     <!-- Logo -->
     <a href="dashboard" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>R</b>PS</span>
+      <span class="logo-mini"><b>S</b>CS</span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>SWOT</b>Charter<b>College</b></span>
+      <span class="logo-lg" style="text-transform: uppercase;"><b><?php echo @$school->school_name; ?></b></span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -54,26 +54,23 @@ $base=base_url('assets/')
           <input type="hidden" value="<?php echo base_url() ?>" id='baseurl'>
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
+            <?php
+              loadClass($this->load,'admin');
+              $this->admin->ID = $this->webSessionManager->getCurrentUserProp('user_table_id');
+              $this->admin->load();
+              $path = @$admin->img_path;
+            ?>
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <!-- <img src="dist/img/user2-160x160.jpg" class="user-image" alt="user"> -->
+              <img src="<?php echo base_url($path); ?>" class="user-image" alt="user">
               <span class="hidden-xs"><?php echo $this->webSessionManager->getUserDisplayName() ?></span>
             </a>
             <ul class="dropdown-menu">
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
-                  <?php if ('student_biodata'==$this->webSessionManager->getCurrentUserProp('user_type')): ?>
-                    <a href="<?php echo base_url('vc/student/profile') ?>" class="btn btn-default btn-flat">Profile</a>
-                    <?php else: ?>
-                      <?php if ('admin'==$this->webSessionManager->getCurrentUserProp('user_type')): ?>
-                        <a href="<?php echo base_url('vc/admin/profile') ?>" class="btn btn-default btn-flat">Profile</a>
-                        <?php else: ?>
-                          <?php if ('lecturer'==$this->webSessionManager->getCurrentUserProp('user_type')): ?>
-                            <a href="<?php echo base_url('vc/lecturer/profile') ?>" class="btn btn-default btn-flat">Profile</a>
-                          <?php endif ?>
-                      <?php endif ?>
-                  <?php endif ?>
-                  
+                <?php if ('admin'==$this->webSessionManager->getCurrentUserProp('user_type')): ?>
+                  <a href="<?php echo base_url('vc/admin/profile') ?>" class="btn btn-default btn-flat">Profile</a>
+                <?php endif; ?>
                 </div>
                 <div class="pull-right">
                   <a href="<?php echo base_url('auth/logout') ?>" class="btn btn-default btn-flat">Sign out</a>
@@ -93,7 +90,7 @@ $base=base_url('assets/')
               display: none;
               position: absolute;
               width: 50%;
-              z-index: 5050;
+              z-index: 5000;
           }
           .modal-dialog {
               margin-top: 150px ;

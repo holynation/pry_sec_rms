@@ -15,14 +15,14 @@ class tableActionModel extends CI_Model
 		$classname = empty($classname)?lcfirst(get_class($object)):ucfirst($classname);
 		$link = base_url("ac/disable/$classname");
 		$label = "disable";
-		if (strtolower($classname)=='past_deans') {
+		if (strtolower($classname)=='academic_session') {
 			$label='Deactivate';
 		}
 		$status = is_array($object)?$object['status']:$object->status;
 		if (!$status) {
 			$link = base_url("ac/enable/$classname");
 			$label = "enable";
-			if (strtolower($classname)=='past_deans') {
+			if (strtolower($classname)=='academic_session') {
 				$label='Activate';
 			}
 		}

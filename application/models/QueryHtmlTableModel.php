@@ -188,7 +188,7 @@
 		}
 		private function buildHtmlAndAction($data,$action,$header=null,$appendForm=array()){
 			if (empty($data)) {
-				return "<div class='empty-data alert alert-primary text-light'>" .$this->lang->line('no_record_found') . "</div>";	
+				return "<div class='empty-data alert alert-danger text-light'>" .$this->lang->line('no_record_found') . "</div>";
 			}
 			$result = $this->openTableTag();
 			$result.= $this->extractheader(empty($header)?array_keys($data[0]):$header,!empty($action),$appendForm);

@@ -58,7 +58,7 @@ class TableViewModel extends CI_Model
 		// $totalRow=0;
 		if (empty($data) || $data==false) {
 			$link = base_url("vc/$model/create");
-			return "<div class='empty-data alert alert-primary text-light'>".
+			return "<div class='empty-data alert alert-danger text-light'>".
 				$this->lang->line('no_record_found').
 			"</div>";
 		}

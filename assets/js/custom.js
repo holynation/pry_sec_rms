@@ -14,7 +14,7 @@ function reportAndRefresh(target,data,action,timeOut){
 }
 
 function timeOutReload(delay){
-	var timeDelay = delay || 5000;
+	var timeDelay = delay || 3000;
 	setTimeout(function(){
 		location.reload();
 	},timeDelay);
@@ -355,13 +355,24 @@ function clearNotification() {
     var notification = $("#notification");
     notification.text("");
 }
+function moveToNextPage(){
+	var loc =$('.continue-btn a').attr('href');
+	location.assign(loc);
+}
 //function for ajax form submission success
 function ajaxFormSubmissionSuccess(target,data) {
 	try{
-		data = data.trim();
+		var data = data.trim();
 		data = $.parseJSON(data);
 		if (typeof(ajaxFormSuccess) ==='function') {
-			ajaxFormSuccess(target.attr("name"),data);return;
+			if(isObject(data)){
+				data = JSON.stringify(data);
+				reportAndRefresh(target,data,'flagAction',2000);
+			}else{
+				ajaxFormSuccess(target.attr("name"),data);return;
+				// reportAndRefresh(target,data,'flagAction',3000);
+				// showNotification(data.status,data.message);
+			}
 		}
 		else{
 			showNotification(data.status,data.message);
@@ -370,18 +381,12 @@ function ajaxFormSubmissionSuccess(target,data) {
 				if (target.attr('action').indexOf('add')!==-1) {
 					clearForm(target);
 				}
-				 
 			}
-			
 		}
 	}
 	catch(err){
 		showNotification(false,data);
 	}
-}
-function moveToNextPage(){
-	var loc =$('.continue-btn a').attr('href');
-	location.assign(loc);
 }
 function ajaxFormSubmissionFailure(target,xhr,data,exception){
 	data = data==null?"an error occur while processing the request":data.toString() + ": an error occur while processing the request";
@@ -393,6 +398,22 @@ function ajaxFormSubmissionFailure(target,xhr,data,exception){
 		// clearForm(form);
 	}
 }
+//function to submit ajax call
+//let the data be added using formdata when it is supported by the browser
+function submitAjaxForm(form){
+	//the submitted form is passed
+	clearNotification();
+	var message = "";
+	if (typeof (message =validateFormData(form)!="string")) {
+		var data = loadFormData(form);
+		var url = form.attr('action');
+		sendAjax(form,url,data,'post',ajaxFormSubmissionSuccess,ajaxFormSubmissionFailure);
+	}
+	else{
+		showNotification(false,message);
+	}
+}
+
 // this function helps send ajax request to the server.
 // the first parameter is the target. not always needed can therefore be null,
 // then the link , the data(already encode) ,
@@ -405,6 +426,7 @@ function sendAjax(target,url,data,type,success, failure){
         data: data,
         contentType:typeof data==='string'?'application/x-www-form-urlencoded':false,
         success: function(data){
+        	// console.log(data);
         	var _parseData = data,
         		$parse = jQuery.parseJSON(_parseData);
 
@@ -446,21 +468,6 @@ function sendAjax(target,url,data,type,success, failure){
     );
 }
 
-//function to submit ajax call
-//let the data be added using formdata when it is supported by the browser
-function submitAjaxForm(form){
-	//the submitted form is passed
-	clearNotification();
-	var message = "";
-	if (typeof (message =validateFormData(form)!="string")) {
-		var data = loadFormData(form);
-		var url = form.attr('action');
-		sendAjax(form,url,data,'post',ajaxFormSubmissionSuccess,ajaxFormSubmissionFailure);
-	}
-	else{
-		showNotification(false,message);
-	}
-}
 /**
  * @param  {form}  the form whose data is to be processed
  * @return {[mixed]} form data object or a serialised string format.

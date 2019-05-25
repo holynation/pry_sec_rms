@@ -47,9 +47,9 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
               <td colspan="12" class="noBorder">
                  <div style="text-align:right;margin-top:-20px;text-transform: uppercase;">
                     <h2>
-                      <div style="color:red;font-weight:bold;font-size:7rem;margin-bottom: -17px;color:#fff;">swot</div>
+                      <div style="color:red;font-weight:bold;font-size:7rem;margin-bottom: -17px;color:#fff;"><?php echo @$school->school_report_first_header; ?></div>
                       <br />
-                      <div style="margin-top: -28px;font-size: 22px;color: #dbbf43;">charter school</div>
+                      <div style="margin-top: -28px;font-size: 22px;color: #dbbf43;"><?php echo @$school->school_report_second_header; ?></div>
                     </h2>
                  </div>
               </td>

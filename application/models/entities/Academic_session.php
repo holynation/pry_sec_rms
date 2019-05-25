@@ -26,7 +26,7 @@ static $defaultArray = array('status' => '0');
 //the folder to save must represent a path from the basepath. it should be a relative path,preserve filename will be either true or false. when true,the file will be uploaded with it default filename else the system will pick the current user id in the session as the name of the file.The max_width and max_height is use to check the dimension of upload files.By default,it value is 0 respectively.
 static $documentField = array(); //array containing an associative array of field that should be regareded as document field. it will contain the setting for max size and data type.;
 static $relation = array();
-static $tableAction = array('delete' => 'delete/academic_session', 'edit' => 'edit/academic_session');
+static $tableAction = array('enable'=>'getEnabled','delete'=>'delete/academic_session','edit'=>'edit/academic_session');
 function __construct($array = array())
 {
 	parent::__construct($array);
@@ -59,6 +59,25 @@ function getStatusFormField($value=''){
 	</select>
 	</div> ";
 
+}
+
+public function enable($id=null,&$db=null)
+{
+	//disable all to enable another one, one session must be active at  a time
+	if ($id==NULL && !isset($this->array['ID'])) {
+		throw new Exception("object does not have id");
+	}
+	if ($id ==NULL) {
+		$id = $this->array["ID"];
+	}
+	$db=$this->db;
+	$db->trans_begin();
+	$query="update academic_session set status=0";
+	if (!$db->query($query)) {
+		$db->trans_rollback();
+		return false;
+	}
+	return $this->setEnabled($id,1,$db);
 }
 
 
