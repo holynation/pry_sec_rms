@@ -433,7 +433,7 @@
 	}
 	//function to determine if a string is a file path
 	function isFilePath($str){
-		$recognisedExtension = array('doc','docx','pdf','ppt','pptx','xls','xlsx','txt','csv');
+		$recognisedExtension = array('doc','docx','pdf','ppt','pptx','xls','xlsx','txt','csv','jpg','png','jpeg','gif','ico');
 		$extension = getFileExtension($str);
 		return (startsWith($str,'uploads') && strpos($str, '/') && in_array($extension, $recognisedExtension)) ;
 	}
