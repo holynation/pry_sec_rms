@@ -35,8 +35,9 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
     ?>
   <section class="content" style="page-break-after: always;">
     <div style="background: white;">
+       <div id="f_wrap" style="width:100%">
       <!-- this is the beginning of the header report -->
-        <div class="table-header">
+        <div class="table-header" style="background-color:#357CA5">
           <table class="table noBorder table-header" style="max-width: 100%;">
             <tr>
               <td colspan="2" class="noBorder">
@@ -44,7 +45,7 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
                  <img width="120" height="100" src="<?php echo base_url(@$school->school_logo); ?>" alt="swot logo">
                 </div>
               </td>
-              <td colspan="12" class="noBorder">
+             <td colspan="12" class="noBorder">
                  <div style="text-align:right;margin-top:-20px;text-transform: uppercase;">
                     <h2>
                       <div style="color:red;font-weight:bold;font-size:7rem;margin-bottom: -17px;color:#fff;"><?php echo @$school->school_report_first_header; ?></div>
@@ -70,8 +71,9 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
           </table>
         </div>
       <!-- end of the header -->
+      <hr>
       <div style="max-width: 100%;">
-        <table style="margin-bottom: 18px;">
+        <table style="margin-bottom: 18px;margin-top:30px">
           <tr>
             <td>
               <div style="margin-bottom: 10px;">
@@ -93,7 +95,7 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
                    <div class="">
                        <table class="mini-table" border="1">
                            <tr>
-                              <td style="padding-left:10px;width:120px;">Name of Pupil</td>
+                              <td style="padding-left:10px;width:120px;">Name</td>
                               <td style="padding: 0 10px;"><?php echo strtoupper($student->surname.' '.$student->firstname.' '. $student->middlename); ?></td>
                            </tr>
                            <tr>
@@ -117,14 +119,14 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
               <table class="mini-table" border="1" style="margin-left:10rem;">
                  <tr>
                     <td style="padding: 0 10px;">Term</td>
-                    <td style="padding-left: 10px;width: 100px;">
+                    <td style="padding-left: 10px;width: 120px;">
                       <?php loadClass($this->load,'term');$term = new Term(array('ID'=>$sessionTerm));$term->load(); 
                         echo $term->term_name .' Term';
                       ?>
                   </tr>
                   <tr>
-                    <td style="padding: 0 10px;">Number in Class</td>
-                    <td style="padding-left: 10px;"><?php echo $totalStudent; ?></td>
+                    <td style="padding: 0 10px;">No. in Class</td>
+                    <td style="padding-left: 10px;width: 120px"><?php echo $totalStudent; ?></td>
                   </tr>
                   <tr>
                     <td style="padding: 0 10px;">Grade</td>
@@ -135,7 +137,7 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
             <td>
               <div>
                 <td style="text-align: right;">
-                  <img src="<?php echo base_url($student->img_path); ?>" alt="student pic" width='150px' height='150px' style="margin-left: 50px;margin-top: -25px;">
+                  <img src="<?php echo base_url($student->img_path); ?>" alt="student pic" width='100px' height='100px' style="margin-left: 110px;margin-top: -25px;float:right;border-radius: 3px;margin-right:15px">
                 </td>
               </div>
             </td>
@@ -150,122 +152,78 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
             $cummPer = 0;
        ?>
       <div>
-        <div style="margin-bottom: 25px;">
-        <?php foreach ($reportData as $key=>$sessionReport): ?>
-          <?php if (!empty($sessionReport['result'])): ?>
-          <table class="format-table1" border="1">
-              <tr class="format-header1">
-                <th rowspan="2" style="text-align: center;width: 100px;">ACADEMIC SUBJECTS</th>
-                <th colspan="2">First summary</th>
-                <th colspan="2">Second summary</th>
-                <th colspan="2">Extra Curriculum</th>
-                <th colspan="2">Examination</th>
-                <th colspan="3">Summary of the Term Work</th>
-                <th rowspan="2"><div>Remarks</div></th>
-              </tr>
-                <tr class="format-header2">
-                 <th style="padding: 0px!important;">Mark(First CA)</th>
-                 <th style="padding: 0px!important;">Mark ()</th>
-                 <th style="padding: 0px!important;">Marks (Second CA)</th>
-                 <th style="padding: 0px!important;">Mark ()</th>
-                 <th style="padding: 0px!important;">Mark Exam</th>
-                 <th style="padding: 0px!important;">Mark ()</th>
-                 <th style="padding: 0px!important;">Mark Total</th>
-                 <th style="padding: 0px!important;">Mark ()</th>
-                 <th style="padding: 0px!important;">Total</th>
-                 <th style="padding: 0px!important;">Class Average</th>
-                 <th style="padding: 0px!important;">Position</th>
+        <div class="rows">
+          <div class="table-wrapper" style="margin-bottom: 25px;">
+          <?php foreach ($reportData as $key=>$sessionReport): ?>
+            <?php if (!empty($sessionReport['result'])): ?>
+              <h2></h2>
+            <table class="format-table1" border="1" width="100%">
+                <tr class="format-header1">
+                  <th rowspan="2" style="text-align: center;width: 100px;">ACADEMIC SUBJECTS</th>
+                  <th colspan="2">First summary</th>
+                  <th colspan="2">Second summary</th>
+                  <th colspan="2">Extra Curriculum</th>
+                  <th colspan="2">Examination</th>
+                  <th colspan="3">Summary of the Term Work</th>
+                  <th rowspan="2"><div>Remarks</div></th>
                 </tr>
-                <?php foreach ($sessionReport['result'] as $index => $value): ?>
-                <tr class="format-value">
-                   <td style="padding: 0px!important;"><?php echo $value['subject_title']; ?></td>
-                   <td style="padding: 0px!important;"><?php echo $value['ca_score1']; $cummCa1+=$value['ca_score1']; ?></td>
-                   <td style="padding: 0px!important;"></td>
-                   <td style="padding: 0px!important;"><?php echo $value['ca_score2']; $cummCa2+=$value['ca_score2']; ?></td>
-                   <td style="padding: 0px!important;"></td>
-                   <td style="padding: 0px!important;"><?php echo $value['exam_score']; $cummExam+=$value['exam_score']; ?></td>
-                   <td style="padding: 0px!important;"></td>
-                   <td style="padding: 0px!important;"><?php echo $value['score']; $cummTotal+=$value['score']; ?></td>
-                   <td style="padding: 0px!important;"></td>
-                   <td style="padding: 0px!important;"></td>
-                   <td style="padding: 0px!important;"></td>
-                   <td style="padding: 0px!important;"></td>
-                   <td style="padding: 0px!important;"><?php echo $value['point']?"PASSED":"FAILED"; ?></td>
-                </tr>
-                <?php endforeach; ?>
-              <tfoot>
-                <tr style="text-align: center;font-weight: bold;">
-                  <th>Total</th>
-                  <td><?php echo $cummCa1; ?></td>
-                  <td></td>
-                  <td><?php echo $cummCa2; ?></td>
-                  <td></td>
-                  <td><?php echo $cummExam; ?></td>
-                  <td></td>
-                  <td><?php echo $cummTotal; ?></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              </tfoot>
-          </table>
-          <?php else: ?>
-            <div class="alert alert-danger text-uppercase">
-              <p>Sorry, no result found for the student in this Class....</p>
-            </div>
-          <?php endif; ?>
-        <?php endforeach; ?>
-        </div>
-        <div class="row">
-          <?php if(@$extraReport): ?>
-          <div class="col-sm-8" style="margin-bottom:20px;">
-            <div style="display: flex;flex-direction: row;">
-              <div>
-                <label>Number of Time School Open</label>
-                <label class="footer-report1"><?php echo $extraReport['times_school_open']; ?></label>
+                  <tr class="format-header2">
+                   <th style="padding: 0px!important;">Mark(First CA)</th>
+                   <th style="padding: 0px!important;">Mark ()</th>
+                   <th style="padding: 0px!important;">Marks (Second CA)</th>
+                   <th style="padding: 0px!important;">Mark ()</th>
+                   <th style="padding: 0px!important;">Mark Exam</th>
+                   <th style="padding: 0px!important;">Mark ()</th>
+                   <th style="padding: 0px!important;">Mark Total</th>
+                   <th style="padding: 0px!important;">Mark ()</th>
+                   <th style="padding: 0px!important;">Total</th>
+                   <th style="padding: 0px!important;">Class Average</th>
+                   <th style="padding: 0px!important;">Position</th>
+                  </tr>
+                  <?php foreach ($sessionReport['result'] as $index => $value): ?>
+                  <tr class="format-value">
+                     <td style="padding: 0px!important;"><?php echo $value['subject_title']; ?></td>
+                     <td style="padding: 0px!important;"><?php echo $value['ca_score1']; $cummCa1+=$value['ca_score1']; ?></td>
+                     <td style="padding: 0px!important;"></td>
+                     <td style="padding: 0px!important;"><?php echo $value['ca_score2']; $cummCa2+=$value['ca_score2']; ?></td>
+                     <td style="padding: 0px!important;"></td>
+                     <td style="padding: 0px!important;"><?php echo $value['exam_score']; $cummExam+=$value['exam_score']; ?></td>
+                     <td style="padding: 0px!important;"></td>
+                     <td style="padding: 0px!important;"><?php echo $value['score']; $cummTotal+=$value['score']; ?></td>
+                     <td style="padding: 0px!important;"></td>
+                     <td style="padding: 0px!important;"></td>
+                     <td style="padding: 0px!important;"></td>
+                     <td style="padding: 0px!important;"></td>
+                     <td style="padding: 0px!important;"><?php echo $value['point']?"PASSED":"FAILED"; ?></td>
+                  </tr>
+                  <?php endforeach; ?>
+                <tfoot>
+                  <tr style="text-align: center;font-weight: bold;">
+                    <th>Total</th>
+                    <td><?php echo $cummCa1; ?></td>
+                    <td></td>
+                    <td><?php echo $cummCa2; ?></td>
+                    <td></td>
+                    <td><?php echo $cummExam; ?></td>
+                    <td></td>
+                    <td><?php echo $cummTotal; ?></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+            </table>
+            <?php else: ?>
+              <div class="alert alert-danger text-uppercase">
+                <p>Sorry, no result found for the student in this Class....</p>
               </div>
-              <div>
-                <label>Number of Time Present</label>
-                <label class="footer-report1"><?php echo $extraReport['time_present']; ?></label>
-              </div>
-            </div>
-            <div style="display: flex;flex-direction: row;justify-content: space-between;">
-              <div style="margin-bottom: 15px;">
-                <label>Class Teacher's Comment</label>
-                <label class="footer-report2"><?php echo $extraReport['teacher_comment']; ?></label>
-              </div>
-              <div>
-                <label>Signature</label>
-                <label>________________________</label>
-              </div>
-            </div>
-            <div style="margin-bottom: 15px;">
-              <div>
-                <label>Head Teacher's Comment</label>
-                <label class="footer-report2"><?php echo $extraReport['head_teacher_comment']; ?></label>
-              </div>
-            </div>
-            <div style="display: flex;flex-direction: row;">
-              <div>
-                <label>Next Term Begins</label>
-                <label class="footer-report1"><?php echo $extraReport['next_term_begins']; ?></label>
-              </div>
-              <div>
-                <label>Sign/Stamp</label>
-                <label></label>
-              </div>
-            </div>
+            <?php endif; ?>
+          <?php endforeach; ?>
           </div>
-          <?php else: ?>
-            <div class="alert alert-danger">
-              <p>Please go to the Configure Report Section to state the Report Configuration...</p>
-            </div>
-          <?php endif; ?>
-
-          <div class="col-sm-4">
-            <table border='1' class="table result-table">
+          <div class="table-wrapper-right">
+            <table border='1' class="result-table" width="100%">
                <thead>
                  <tr class="first-header">
                   <th>BEHAVIOUR</th>
@@ -418,10 +376,45 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
                </tbody>
             </table>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-6 col-md-6 col-xs-6" style="margin-top:-24px;">
-            <table border='1' class="table result-table" style="width: 500px;">
+           <div class="clearfix"></div>
+      </div>
+       <!-- space -->
+        <div class="rows">
+          <div class="t-right">
+               <div style="display: flex;flex-direction: row;">
+                 <div>
+                  <label style="color: #ccc">Number of Time School Open</label>
+                  <label class="footer-report1"><?php echo $extraReport['times_school_open']; ?></label>
+                  </div>
+                  <div>
+                  <label style="color: #ccc">Number of Time Present</label>
+                  <label class="footer-report1"><?php echo $extraReport['time_present']; ?></label>
+                 </div>
+               </div>
+                <div style="display: flex;flex-direction: row;justify-content: space-between;">
+                    <div style="margin-bottom: 15px;">
+                    <label style="color: #ccc">Class Teacher's Comment</label>
+                    <label class="footer-report2"><?php echo $extraReport['teacher_comment']; ?></label>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                  <div>
+                    <label style="color: #ccc">Head Teacher's Comment</label>
+                    <label class="footer-report2"><?php echo $extraReport['head_teacher_comment']; ?></label>
+                  </div>
+                </div>
+                <div style="display: flex;flex-direction: row;">
+                  <div>
+                    <label>Next Term Begins</label>
+                    <label class="footer-report1"><?php echo $extraReport['next_term_begins']; ?></label>
+                  </div>
+                  <div>
+                    <label style="margin-left: 20px">Sign/Stamp</label>
+                  </div>
+                </div>
+          </div>
+          <div class="t-left">
+            <table border='1' id="result-table" class="result-table" style="width: 100px;">
                <thead>
                  <tr class="first-header">
                   <th colspan="2">ACADEMIC RATING</th>
@@ -452,9 +445,7 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
                   </tr>
                 </tbody>
             </table>
-          </div>
-          <div class="col-sm-6 col-md-6 col-xs-6" style="margin-top:-24px;">
-            <table border='1' class="table result-table" style="width: 500px;">
+            <table border='1' id="result-table" class="result-table" style="width: 100px;">
                <thead>
                  <tr class="first-header">
                   <th colspan="2">KEY TO REPORT RATING & PERFORMANCES</th>
@@ -486,7 +477,23 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
                 </tbody>
             </table>
           </div>
+          <div class="clearfix"></div>
         </div>
+
+         <div class="row">
+          <?php if(@$extraReport): ?>
+          <div class="col-md-8" style="margin-bottom:20px;">
+         
+          </div>
+          <?php else: ?>
+            <div class="alert alert-danger">
+              <p>Please go to the Configure Report Section to state the Report Configuration...</p>
+            </div>
+          <?php endif; ?>
+        </div>
+      </div>
+     
+        
       </div>
     </div>
   </section>
@@ -502,13 +509,13 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
   }
   .footer-report2{
     border-bottom: 1px solid #000;
-    width:550px;
-    text-align: center;
+    width:100%;
+    text-align: left;
   }
   .mini-table{
   font-size: 0.9em;
   font-weight: bold;
-  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-family: 'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
   padding: 2px;
   border: thin solid #f25989;
 }
@@ -519,20 +526,23 @@ tr.rate-header>tr>th{
       border:none !important;
     }
   .table-header{
-    background-color: #357CA5 !important;
+    background-color: #357CA5;
     color:#fff;
     margin-top: -10px;
     margin-bottom: -30px;
   }
-  .format-table1{
+  .format-table1 {
     border: thin solid #f25989;
-    letter-spacing: 1.5px;
-    font-family: sans-serif;
-    font-size: 1.5rem
-  }
+    letter-spacing: 0px;
+    font-family: 'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size: 1.2rem;
+}
 tr.format-header1 > th{
   color:inherit;
   text-align: center;
+}
+tr.format-value td:nth-child(1){
+  font-weight: bold;
 }
 tr.format-header2 > th{
   width: 15px;
@@ -551,10 +561,10 @@ tr.format-value > td{
 }
 .result-table{
   border: thin solid #f25989;
-  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-family: 'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
   font-size: 1.15rem;
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.2;
   color: inherit;
 }
 .result-table tr.first-header >th{
@@ -567,7 +577,30 @@ tr.format-value > td{
 .result-table td{
   padding-left:10px;
 }
-
+.rows{
+  width: 100%;
+}
+.table-wrapper{
+  width: 30%;
+  float: left;
+  margin-right: 53%
+}
+.table-wrapper-right{
+  width: 15%;
+  float: left;
+}
+.t-left{
+  float: right;
+  width: 20%;
+  margin-right: -8%;
+}
+.t-right{
+  float: left;
+  width: 70%;
+}
+#result-table{
+  margin-top: 10px;
+}
 </style>
 </div>
   <div class="btn btn-success pull-right print">Print</div>
