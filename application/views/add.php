@@ -190,7 +190,7 @@ $where .= ' order by ID desc ';
                         $where.= $where?" and {$item['filter_label']}='$value' ":"where {$item['filter_label']}='$value' ";
                       }
                     ?>
-                      <select class="form-control1 <?php echo isset($item['child'])?'autoload':'' ?>" name="<?php echo $display ?>" id="<?php echo $display ?>"  <?php echo isset($item['child'])?"data-child='{$item['child']}'":""?> <?php echo isset($item['load'])?"data-load='{$item['load']}'":""?> >
+                      <select class="form-control1 <?php echo isset($item['child'])?'autoload':'' ?>" name="<?php echo $display; ?>" id="<?php echo $display; ?>"  <?php echo isset($item['child'])?"data-child='{$item['child']}'":""?> <?php echo isset($item['load'])?"data-load='{$item['load']}'":""?> >
                       <option value="">..select <?php echo removeUnderscore(rtrim($display,'_id')) ?>...</option>
                       <?php if (isset($item['preload_query'])&& $item['preload_query']): ?>
                         <?php echo buildOptionFromQuery($this->db,$item['preload_query'],null,isset($_GET[$display])?$_GET[$display]:''); ?>

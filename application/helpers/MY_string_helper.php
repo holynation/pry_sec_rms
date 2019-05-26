@@ -254,6 +254,11 @@
  		}
  		return false;	
  	}
+ 	function emptyDate($date){
+ 		if(substr($date,0,10) == '0000-00-00'){
+			return true;
+		}
+ 	}
 
 	// function to calculate time ago
 	function timeAgo($time_ago){
@@ -319,6 +324,34 @@
             }
         }
 	}
+	function calc_size($file_size){
+		$_size = '';
+ 		$kb = 1024;
+		$mb = 1048576;
+ 		$gb = 1073741824;
+
+		if(empty($file_size)){
+		  	return '' ;
+		}
+
+	 	else if($file_size < $kb ) {
+	 		return $_size . "B";
+
+	 	}elseif($file_size > $kb AND $file_size < $mb ) {
+	 		$_size = round($file_size/$kb, 2);
+	 		return $_size . "KB";
+
+	 	}elseif($file_size >= $mb AND $file_size < $gb) {
+	 		$_size = round($file_size/$mb, 2);
+	 		return $_size . "MB";
+
+	 	}else if($file_size >= $gb ) {
+	 		$_size = round($file_size/$gb, 2);
+	 		return $_size . "GB";
+	 	}else{
+	 		return NULL;
+	 	}
+	 }
 
 	// function to send download request of a file to the browser
 	function sendDownload($content,$header,$filename){
