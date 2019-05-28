@@ -8,6 +8,8 @@ defined("BASEPATH") OR exit("No direct script access allowed");
 
 class User extends Crud {
 
+private $_data;
+
 protected static $tablename = "User"; 
 /* this array contains the field that can be null*/ 
 static $nullArray = array('token','last_logout');
@@ -117,6 +119,28 @@ protected function getUser_table(){
 	include_once('User_table.php');
 	$resultObject = new User_table($result[0]);
 	return $resultObject;
+}
+
+public function find($user = null){
+	if($user){
+		$field = (is_numeric($user)) ? 'id' : 'username';
+	    $data = $this->db->get_where('user', array($field => $user));
+	 
+	   if($data->num_rows() > 0){
+	   	  $this->_data = $data->result_array(); // setting the data value of a user to making it public
+	   	   return true;
+	   }	
+	}
+
+ 	return false;		
+}
+
+public function dataExists(){
+   return (!empty($this->_data)) ? true : false;
+}
+
+public function data(){
+ 	return $this->_data;
 }
 
  

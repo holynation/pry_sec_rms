@@ -54,14 +54,14 @@ include "template/sidebar.php";
               <div class="form-group col-sm-3 col-md-3">
                 <label for="">Session Term</label>
                 <select class="form-control" name="sessionTerm" id="sessionTerm" required="">
-                    <option value="" >..select session term</option>
+                    <option value="" >..select term</option>
                     <?php echo buildOptionFromQuery($this->db,'select id,term_name as value from term order by id asc'); ?>
                 </select>
               </div>
               <div class="form-group col-sm-3 col-md-3">
                   <label for="">School Class</label>
                   <select class="form-control autoload" data-child='reg' data-load='studentIn' data-depend='session,sessionTerm' name="l" id="class" required=""> 
-                      <option value="">..select level..</option>
+                      <option value="">..select class..</option>
                       <?php echo buildOptionFromQuery($this->db,'select id,class_name as value from school_class'); ?>
                   </select>
               </div>

@@ -45,11 +45,11 @@
           confirm_password = $('#data_confirm_password').val();
 
           if(data_password == '' || confirm_password == ''){
-              data_notify.html('<p class="alert alert-warning" style="width:45%;margin:0 auto;">Field is required...</p>');
+              data_notify.html('<p class="alert alert-danger" style="width:50%;margin:0 auto;">All Field is required...</p>');
               return false;
           }
           else if(data_password != confirm_password ){
-            data_notify.html('<p class="alert alert-warning" style="width:45%;margin:0 auto;">Password must match...</p>');
+            data_notify.html('<p class="alert alert-danger" style="width:50%;margin:0 auto;">Password must match...</p>');
             return false;
           }else{
           	submitAjaxForm($(this));

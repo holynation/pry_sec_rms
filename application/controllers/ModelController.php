@@ -543,7 +543,7 @@ class ModelController extends CI_Controller
 	// 	$this->application_log->log($model,$description);
 	// }
 
-	function update($model,$id='',$filter=false){
+	function update($model,$id='',$filter=false,$flagAction = false){
 		if (empty($id) || empty($model)) {
 			echo createJsonMessage('status',false,'message','an error occured while processing information','description','the model parameter is null so it must not be null');
 			return;
@@ -551,12 +551,12 @@ class ModelController extends CI_Controller
 		if ($model=='many') {
 			$this->updateMany($filter);
 		} else {
-			$this->updateSingle($model,$id,__METHOD__,$filter);
+			$this->updateSingle($model,$id,__METHOD__,$filter,$flagAction);
 		}
 
 	}
 
-	private function updateSingle($model,$id,$method,$filter){
+	private function updateSingle($model,$id,$method,$filter,$flagAction=false){
 		$this->modelCheck($model,'u');
 		$this->load->model("entities/$model");
 		$filter = (bool)$filter;
@@ -570,29 +570,53 @@ class ModelController extends CI_Controller
 			$this->$model->setArray($parameter);
 			if (!$this->$model->update($id,$this->db)) {
 				$this->db->trans_rollback();
-				$message="cannot perform update";
-				 echo createJsonMessage('status',false,'message',$message);
+				// $message="cannot perform update";
+				$arr['status']=false;
+		        $arr['message']= 'cannot perform update';
+		        if($flagAction){
+		        	$arr['flagAction'] = $flagAction;
+		        }
+		        echo json_encode($arr);
+				 // echo createJsonMessage('status',false,'message',$message);
 				return ;
 			}
-		$data['ID']=$id;
-		if($this->DoAfterInsertion($model,'update',$data,$this->db,$message)){
-			$this->db->trans_commit();
-			$message = empty($message)?'operation successfull':$message;
+			$data['ID']=$id;
+			if($this->DoAfterInsertion($model,'update',$data,$this->db,$message)){
+				$this->db->trans_commit();
+				$message = empty($message)?'operation successfull':$message;
+				$arr['status'] = true;
+		        $arr['message']= $message;
+		        if($flagAction){
+		        	$arr['flagAction'] = $flagAction;
+		        }
+		        echo json_encode($arr);
 
-			echo createJsonMessage('status',true,'message',$message);
+				// echo createJsonMessage('status',true,'message',$message);
+				return;
+			}
+			else{
+				$this->db->trans_rollback();
+				$arr['status']=false;
+		        $arr['message']= $message;
+		        if($flagAction){
+		        	$arr['flagAction'] = $flagAction;
+		        }
+		        echo json_encode($arr);
+				 // echo createJsonMessage('status',false,'message',$message);
+				return;
+			}
+		}
+		else{
+
+			$this->db->trans_rollback();
+			$arr['status']=false;
+	        $arr['message']= $message;
+	        if($flagAction){
+	        	$arr['flagAction'] = $flagAction;
+	        }
+	        echo json_encode($arr);
+			 // echo createJsonMessage('status',false,'message',$message);
 			return;
-		}
-		else{
-			$this->db->trans_rollback();
-			 echo createJsonMessage('status',false,'message',$message);
-			return ;
-		}
-		}
-		else{
-
-			$this->db->trans_rollback();
-			 echo createJsonMessage('status',false,'message',$message);
-			return ;
 		}
 	}
 

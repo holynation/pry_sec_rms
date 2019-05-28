@@ -148,40 +148,6 @@
 				
 			}
 		}
-		public function savePublication(){
-			if(isset($_POST['best_pub'])){
-				$table = $_POST['tableModel'];
-				$userTypeId = $_POST['userId'];
-				loadClass($this->load,'best_publication');
-				
-				try{
-					$updateList = json_decode($_POST['update'],true);
-					if(empty($updateList)){
-						echo createJsonMessage('status',false,'message','You have not chosen any publication','flagAction',false);
-						exit;
-					}
-					$result = $this->best_publication->processPublication($table,$userTypeId,$updateList); 
-					echo createJsonMessage('status',$result,'message','Your publication is successfully saved...','flagAction',true);
-				}catch(Exception $e){
-					echo createJsonMessage('status',false,'message','error occured while saving best publication','flagAction',false);
-				}
-			}
-
-			if(isset($_POST['best_remove_pub'])){
-				$tableModel = $_POST['tableModel'];
-				$userType = $_POST['userType'];
-				loadClass($this->load,'best_publication');
-
-				try{
-					$removeList = json_decode($_POST['remove'],true);
-					$result = $this->best_publication->processPublicationRemove($tableModel,$userType,$removeList);
-					echo createJsonMessage('status',$result,'message','You have successfully remove the publication...');
-				}catch(Exception $e){
-					echo createJsonMessage('status',false,'message','error occured while saving best publication');
-				}
-
-			}
-		}
 
 	}
  ?>

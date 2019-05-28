@@ -78,6 +78,7 @@ $where .= ' order by ID desc ';
         $formContent= $this->modelFormBuilder->start($model.'_table')
         ->appendInsertForm($model,true,$hidden,'',$showStatus,$exclude)
         ->addSubmitLink()
+        ->appendResetButton('Reset','btn-danger')
         ->appendSubmitButton($submitLabel,'btn btn-success')
         ->build();
     ?>
@@ -274,7 +275,6 @@ $where .= ' order by ID desc ';
       }
     }
   </script>
-<!-- </di -->
  <?php include "template/footer.php" ?>
 
 

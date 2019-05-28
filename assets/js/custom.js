@@ -360,19 +360,40 @@ function moveToNextPage(){
 	location.assign(loc);
 }
 //function for ajax form submission success
+// function ajaxFormSubmissionSuccess(target,data) {
+// 	try{
+// 		var data = data.trim();
+// 		data = $.parseJSON(data);
+// 		if (typeof(ajaxFormSuccess) ==='function') {
+// 			if(isObject(data)){
+// 				data = JSON.stringify(data);
+// 				reportAndRefresh(target,data);
+// 			}else{
+// 				ajaxFormSuccess(target.attr("name"),data);return;
+// 				// reportAndRefresh(target,data,'flagAction',3000);
+// 				// showNotification(data.status,data.message);
+// 			}
+// 		}
+// 		else{
+// 			showNotification(data.status,data.message);
+// 			if (data.status && target!==null ) {
+// 				//if the insert is an insert command just clear the form else leave the form u
+// 				if (target.attr('action').indexOf('add')!==-1) {
+// 					clearForm(target);
+// 				}
+// 			}
+// 		}
+// 	}
+// 	catch(err){
+// 		showNotification(false,data);
+// 	}
+// }
 function ajaxFormSubmissionSuccess(target,data) {
 	try{
-		var data = data.trim();
+		data = data.trim();
 		data = $.parseJSON(data);
 		if (typeof(ajaxFormSuccess) ==='function') {
-			if(isObject(data)){
-				data = JSON.stringify(data);
-				reportAndRefresh(target,data,'flagAction',2000);
-			}else{
-				ajaxFormSuccess(target.attr("name"),data);return;
-				// reportAndRefresh(target,data,'flagAction',3000);
-				// showNotification(data.status,data.message);
-			}
+			ajaxFormSuccess(target.attr("name"),data);return;
 		}
 		else{
 			showNotification(data.status,data.message);
@@ -382,6 +403,7 @@ function ajaxFormSubmissionSuccess(target,data) {
 					clearForm(target);
 				}
 			}
+			
 		}
 	}
 	catch(err){
@@ -424,6 +446,7 @@ function sendAjax(target,url,data,type,success, failure){
         type: type,
         processData:typeof data==='string'?true:false,
         data: data,
+        cache: false,
         contentType:typeof data==='string'?'application/x-www-form-urlencoded':false,
         success: function(data){
         	// console.log(data);
@@ -484,6 +507,39 @@ function loadFormData(form){
 	var data = new FormData(form[0]);
 	data.append(subName,subValue);
 	return data;
+}
+// this function is to preview a single image and not a multiple image
+function filePreview(form){
+  if(form && form[0]){
+    var preview;
+    var formId = form.attr('id'),
+       preview = document.querySelector("input[type='file'] ~ img"),
+       file    = document.querySelector('input[type=file]').files[0];
+       if(preview == null){
+        var tempPreview = document.querySelector("input[type='file']").previousElementSibling;
+         if(tempPreview.tagName.toLowerCase() == 'img'){
+          preview = tempPreview;
+         }else{
+         	$("input[type='file']").after("<img src='' alt='image' width ='80%' height='50%' style='margin-top:10px;' />");
+          	preview = document.querySelector("input[type='file'] ~ img");
+         }
+       }
+       // console.log(preview);return;
+
+    if(preview !== null){
+      var reader = new FileReader();
+      reader.onload = function (e){
+        preview.src = reader.result;
+      }
+      // reader.addEventListener("load", function () {
+      //   preview.src = reader.result;
+      // }, false);
+
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    }
+  }
 }
 //function to clear the content of a form
 function clearForm(form){

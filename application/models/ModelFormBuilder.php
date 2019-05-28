@@ -32,6 +32,16 @@ private $cont ="mc";
 	private function createJSScript(){
 		$result = "<script>
 		\$(document).ready(function(){
+			var fileType = \$('#{$this->formName}').find('input[type=\"file\"]');
+			if(fileType){
+				var fileID = fileType.attr('id');
+				// console.log(fileID);
+				\$('#' + fileID).change(function(){
+					// console.log('got here');
+					filePreview(\$(this));
+				});
+			}
+
 			\$('#{$this->formName}').submit(function(e){
 				e.preventDefault();
 				submitAjaxForm(\$(this));

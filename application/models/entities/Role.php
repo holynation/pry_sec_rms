@@ -10,7 +10,7 @@ class Role extends Crud {
 
 protected static $tablename = "Role"; 
 /* this array contains the field that can be null*/ 
-static $nullArray = array();
+static $nullArray = array('status');
 static $compositePrimaryKey = array();
 static $uploadDependency = array();
 /*this array contains the fields that are unique*/ 
@@ -208,7 +208,7 @@ public function checkWritePermission(){
 			$path='vc/add/admin';
 		}
 		if (!$role->canWrite($path)) {
-		  echo createJsonMessage('status',false,'message','sorry,you do not have permission to perform operation');exit;
+		  echo createJsonMessage('status',false,'message','sorry,you do not have permission to perform the operation');exit;
 		}
 	}
 
@@ -263,7 +263,8 @@ public function getModules()
 			'class'=>'fa-users',
 			'children'=>array(
 				'Student'=>'vc/add/student_biodata',
-				'Admin'=>'vc/add/admin'
+				'Admin'=>'vc/add/admin',
+				'Role' => 'vc/add/role'
 			)
 		),
 		'School Setting'=>array(

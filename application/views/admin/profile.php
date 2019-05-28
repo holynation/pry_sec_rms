@@ -36,7 +36,7 @@ include "template/sidebar.php";
                   <div class="showupload btn btn-primary btn-block">change photo</div>
                   <div class="form">
                     <div class="upload-control" style="display: none; width: 205px;margin:0 auto;">
-                      <form id="data_profile_change" method="post" enctype="multipart/form-data" action="<?php echo base_url('mc/update/admin/'.$admin->ID.'/1') ?> ">
+                      <form id="data_profile_change" method="post" enctype="multipart/form-data" action="<?php echo base_url('mc/update/admin/'.$admin->ID.'/1/1') ?> ">
                       <label for="">
                         choose file to upload <br>
                         <input type="file" name="img_path" id="img_path" class="form-control">
@@ -73,6 +73,12 @@ include "template/sidebar.php";
                   <form  class="form-horizontal" id="form_change_password" name="form_change_password" action="<?php echo base_url('vc/changePassword'); ?>">
                     <div id="data_notify"></div><br>
                     <div class="box-body">
+                      <div class="form-group">
+                        <label for="data_current_password" class="col-sm-2 control-label">Current Password</label>
+                        <div class="col-sm-10">
+                          <input type="password" class="form-control" id="data_current_password" name="data_current_password" placeholder="Current Password">
+                        </div>
+                      </div>
                       <div class="form-group">
                         <label for="data_password" class="col-sm-2 control-label">Password</label>
                         <div class="col-sm-10">
@@ -153,13 +159,17 @@ include "template/sidebar.php";
        submitAjaxForm($(this));
       });
 
-      $("#form_change_password").submit(function(event) {
-        event.preventDefault();
-        if ($('#')) {}
-      });
+      var fileType = $('#data_profile_change').find('input[type=\"file\"]');
+      if(fileType){
+        var fileID = fileType.attr('id');
+        $(`#${fileID}`).change(function(){
+          // console.log('got here');
+          filePreview($(this));
+        });
+      }
     }
  function ajaxFormSuccess(target,data) {
-   reportAndRefresh(target,data);
+   reportAndRefresh(target,data,'flagAction',3000);
  }
   </script>
  

@@ -53,7 +53,12 @@ function getLastnameFormField($value=''){
 }
 function getImg_pathFormField($value='')
 {
-	return '';
+	$path=  ($value != '') ? base_url($value) : "";
+	return "<div class='form-group'>
+	<label for='img_path' >Admin Profile</label>
+	<img src='$path' alt='admin pic' width='30%'/>
+		<input type='file' name='img_path' id='img_path' value='$value' class='form-control'  />
+</div> ";
 }
 function getEmailFormField($value=''){
 	return "<div class='form-group'>
@@ -95,7 +100,7 @@ function getDobFormField($value=''){
 		<label for='role_id'>Role</label>";
 		$option = $this->loadOption($fk,$value);
 		//load the value from the given table given the name of the table to load and the display field
-		$result.="<select name='role_id' id='role_id' class='form-control'>
+		$result.="<select name='role_id' id='role_id' class='form-control' required>
 			$option
 		</select>";
 	}

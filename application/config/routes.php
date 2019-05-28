@@ -64,6 +64,7 @@ $route['mc/(:any)'] = 'modelController/$1';
 $route['mc/(:any)/(:any)'] = 'modelController/$1/$2';
 $route['mc/(:any)/(:any)/(:any)'] = 'modelController/$1/$2/$3';
 $route['mc/(:any)/(:any)/(:any)/(:any)'] = 'modelController/$1/$2/$3/$4';
+$route['mc/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'modelController/$1/$2/$3/$4/$5';
 $route['ac/(:any)'] = 'actionController/$1';
 $route['delete/(:any)/(:any)']='actionController/delete/$1/$2';
 $route['ac/(:any)/(:any)'] = 'actionController/$1/$2';
