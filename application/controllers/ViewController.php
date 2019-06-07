@@ -246,6 +246,10 @@ class ViewController extends CI_Controller{
     $data['uploadHistory']=$result;
   }
 
+  private function adminSignature(&$data){
+    loadClass($this->load,'signature');
+  }
+
   public function studentProfile(&$data)
   {
     if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
