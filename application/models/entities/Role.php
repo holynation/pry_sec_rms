@@ -201,9 +201,6 @@ public function checkWritePermission(){
 		//get the page referer and use it as the
 		$path = $_SERVER['HTTP_REFERER'];
 		$path = $this->extractBase($path);
-		if (strpos($path, 'vc/lecturer/profile/')===false) {
-			$path='vc/add/lecturer';
-		}
 		if (strpos($path, 'vc/admin/profile/')===false) {
 			$path='vc/add/admin';
 		}
@@ -299,6 +296,7 @@ public function getModules()
 				'Student Register' => 'vc/admin/student_registration',
 				'Student Result'=>'vc/admin/student_result',
 				'Configure Report' => 'vc/add/configure_report',
+				'Head Signature' => 'vc/admin/signature',
 				'Student Report'=>'vc/admin/result_option'
 				
 			)

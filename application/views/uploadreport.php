@@ -1,12 +1,8 @@
 <?php 
-
 $userType = $this->webSessionManager->getCurrentUserProp('user_type');
 include "template/header.php";
 if ($userType =='admin') {
   include "template/sidebar.php";
-}
-elseif ($userType=='lecturer') {
-  include "template/sidebar_lecturer.php";
 }
 else{
   show_404();exit;
@@ -39,24 +35,24 @@ else{
       <div class="row">
         <!-- right col (We are only adding the ID to make the widgets sortable)-->
         <section class="col-lg-12 connectedSortable">
-            <div class="col-sm-12">
-              <?php if ($status): ?>
-                <div class="alert alert-success"><?php echo  wordwrap(ucfirst($message), 100 , "\n", true);  ?></div>
-                <?php else: ?>
-                  <div class="alert alert-danger"><?php echo ucfirst($message); ?></div>
-              <?php endif; ?>
-            </div>
+          <div class="col-sm-12">
+            <?php if ($status): ?>
+              <div class="alert alert-success"><?php echo  wordwrap(ucfirst($message), 100 , "\n", true);  ?></div>
+              <?php else: ?>
+                <div class="alert alert-danger"><?php echo ucfirst($message); ?></div>
+            <?php endif; ?>
+          </div>
         </section>
         <!-- right col -->
       </div>
       
       <br>
-      <a href="<?php echo @$backLink?$backLink:$_SERVER['HTTP_REFERER']; ?>" class="btn btn-primary">
+      <a href="<?php echo @$backLink?$backLink:''; ?>" class="btn btn-primary">
         <i class="fa fa-arrow-back"></i> Back
       </a>
       <!-- /.row (main row) -->
     </section>
     <!-- /.content -->
   </div>
- <?php include "template/footer.php" ?>
+ <?php include "template/footer.php"; ?>
  

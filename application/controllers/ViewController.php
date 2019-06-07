@@ -219,6 +219,8 @@ class ViewController extends CI_Controller{
     $data['sessionTerm'] = $sessionTerm;
     $data['currentClass'] = $level;
     $data['totalStudent'] = $this->student_biodata->countGetStudentIn($level,$session);
+    loadClass($this->load,'signature');
+    $data['signature'] = $this->signature->getSignature();
     $content=array();
     foreach ($students as $student) {
       $content[]=array('student'=>$student,'report'=>$this->adminData->getStudentResultData($student,$sess,$sessionTerm,$level,$extraReport,$resultCount,$totalPercentage),'extraReport'=>@$extraReport,'resultCount'=>@$resultCount,'totalPercentage'=>@$totalPercentage);

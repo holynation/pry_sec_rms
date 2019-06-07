@@ -45,15 +45,6 @@ class ModelController extends CI_Controller
 				return;
 
 			}
-			//this is to check for the slider model
-			if($model == 'faculty_news'){
-				loadClass($this->load,'faculty_news');
-				$result = $this->faculty_news->checkLimit();
-				if($result >= 3){
-					echo createJsonMessage('status',false,'message','sorry, you\'ve reached the limit for faculty news (3)...');
-					return;
-				}
-			}
 
 			unset($_POST['MAX_FILE_SIZE']);
 			if ($model=='many') {
@@ -740,115 +731,123 @@ class ModelController extends CI_Controller
 
 	public function upload_result()
 	{
-		if(empty($_POST['session_term']) || empty($_POST['school_class']) || empty($_POST['subject'])){
-			$param = array('status'=>false,'message'=>'Please fill the required field for uploading of result','backLink'=>$_SERVER['HTTP_REFERER'],'model'=>'result');
-			$this->load->view('uploadreport',$param);return;
-		}
+		if(isset($_POST['upload_result'])){
+			loadClass($this->load,'school');
+		    $schoolData=$this->school->all($total,false);
+		    $schoolData = ($schoolData) ? $schoolData[0] : "System";
 
-		$course = $_POST['subject'];
-		$ss=$_POST['session_term'];
-		$school_class = (isset($_POST['school_class']) && $_POST['school_class'])?$_POST['school_class']:'';
-
-		loadClass($this->load,'session_term');
-		$sessionSem = $this->session_term->getWhere(array('session_term.ID'=>$ss),$count,0,null,false);
-		$filePath = 'uploads/result/uploaded/'.str_replace('/', '_', $sessionSem[0]->academic_session->session_name).'_'.$sessionSem[0]->term->term_name;
-		loadClass($this->load,'subject');
-		$this->subject->ID=$course;
-		$this->subject->load();
-		$courseCode = $this->subject->subject_title;
-		$filePath.='_'.$courseCode.'_'.date('y-m-d h-i-s').'.csv';
-
-		$content = $this->loadUploadedFileContent($filePath);
-		$content = trim($content);
-		$array = stringToCsv($content);
-		$header = array_shift($array);
-		$result = array();
-		$unsuccessful=array();
-		$insertString='';
-		
-		$registeredStudent=array();
-		$sessionTermSubject=$course;
-
-		$ca1Index = array_search('CA1', $header);
-		$ca2Index = array_search('CA2', $header);
-		$caIndex=array_search('CA TOTAL', $header);
-		$examIndex= array_search('EXAM TOTAL', $header);
-		$regIndex = array_search('registration number', $header);
-		$totalIndex = array_search('TOTAL', $header);
-
-		if ($ca1Index === false || $ca2Index === false || $totalIndex===false || $regIndex===false || $examIndex===false||$caIndex==false) {
-			exit("invalid template file. go back and download the real template then try again.");
-		}
-		//validate later here
-		loadClass($this->load,'student_biodata');
-		foreach ($array as $key => $value) {
-			$regNum = $value[$regIndex];
-			if (!$this->student_biodata->getWhere(array('registration_number'=>$regNum),$c,0,null,false)) {
-				continue;
-			}
-			$ca1 = floatval($value[$ca1Index]);
-			$ca2 = floatval($value[$ca2Index]);
-			$ca = floatval($value[$caIndex]);
-			$exam = floatval($value[$examIndex]);
-			$total = floatval($ca+$exam);
-			$fileTotal = floatval($value[$totalIndex]);
-			if ($total!=$fileTotal) {
-				exit("sorry, score did not add up at row ".($key+1)." please try again");
-			}
-			if ($total > 100) {
-				exit("sorry, total score at row ".($key+1)." is greater than 100 please check and try again");
+			if(empty($_POST['session_term']) || empty($_POST['school_class']) || empty($_POST['subject'])){
+				$param = array('status'=>false,'message'=>'Please fill the required field for uploading of result','backLink'=>$_SERVER['HTTP_REFERER'],'model'=>'result','school'=>$schoolData);
+				$this->load->view('uploadreport',$param);return;
 			}
 
-			if (isset($_POST['auto-register'])) {
-				if($this->registerStudent($regNum,$sessionTermSubject,$ss,$sessionSem[0]->academic_session_id,$school_class)){
-					$regCourse = $this->getRegisteredCourse($value[0],$sessionTermSubject,$ss);
-					$registeredStudent[]=$regNum;
-					if ($insertString) {
-						$insertString.=',';
+			$course = $_POST['subject'];
+			$ss=$_POST['session_term'];
+			$school_class = (isset($_POST['school_class']) && $_POST['school_class'])?$_POST['school_class']:'';
+
+			loadClass($this->load,'session_term');
+			$sessionSem = $this->session_term->getWhere(array('session_term.ID'=>$ss),$count,0,null,false);
+			$filePath = 'uploads/result/uploaded/'.str_replace('/', '_', $sessionSem[0]->academic_session->session_name).'_'.$sessionSem[0]->term->term_name;
+			loadClass($this->load,'subject');
+			$this->subject->ID=$course;
+			$this->subject->load();
+			$courseCode = $this->subject->subject_title;
+			$filePath.='_'.$courseCode.'_'.date('y-m-d h-i-s').'.csv';
+
+			$content = $this->loadUploadedFileContent($filePath);
+			$content = trim($content);
+			$array = stringToCsv($content);
+			$header = array_shift($array);
+			$result = array();
+			$unsuccessful=array();
+			$insertString='';
+			
+			$registeredStudent=array();
+			$sessionTermSubject=$course;
+
+			$ca1Index = array_search('CA1', $header);
+			$ca2Index = array_search('CA2', $header);
+			$caIndex=array_search('CA TOTAL', $header);
+			$examIndex= array_search('EXAM TOTAL', $header);
+			$regIndex = array_search('registration number', $header);
+			$totalIndex = array_search('TOTAL', $header);
+
+			if ($ca1Index === false || $ca2Index === false || $totalIndex===false || $regIndex===false || $examIndex===false||$caIndex==false) {
+				exit("invalid template file. go back and download the real template then try again.");
+			}
+			//validate later here
+			loadClass($this->load,'student_biodata');
+			foreach ($array as $key => $value) {
+				$regNum = $value[$regIndex];
+				if (!$this->student_biodata->getWhere(array('registration_number'=>$regNum),$c,0,null,false)) {
+					continue;
+				}
+				$ca1 = floatval($value[$ca1Index]);
+				$ca2 = floatval($value[$ca2Index]);
+				$ca = floatval($value[$caIndex]);
+				$exam = floatval($value[$examIndex]);
+				$total = floatval($ca+$exam);
+				$fileTotal = floatval($value[$totalIndex]);
+				if ($total!=$fileTotal) {
+					exit("sorry, score did not add up at row ".($key+1)." please try again");
+				}
+				if ($total > 100) {
+					exit("sorry, total score at row ".($key+1)." is greater than 100 please check and try again");
+				}
+
+				if (isset($_POST['auto-register'])) {
+					if($this->registerStudent($regNum,$sessionTermSubject,$ss,$sessionSem[0]->academic_session_id,$school_class)){
+						$regCourse = $this->getRegisteredCourse($value[0],$sessionTermSubject,$ss);
+						$registeredStudent[]=$regNum;
+						if ($insertString) {
+							$insertString.=',';
+						}
+						$insertString.=" ('$regCourse','$ca','$exam','$total','$ca1','$ca2')";
 					}
-					$insertString.=" ('$regCourse','$ca','$exam','$total','$ca1','$ca2')";
+					else{
+						$unsuccessful[]=$value[0];
+						continue;
+					}
 				}
 				else{
 					$unsuccessful[]=$value[0];
 					continue;
 				}
+					
+			}
+			if ($this->webSessionManager->getCurrentuserProp('user_type')=='admin') {
+				$data['canView']=$this->getAdminSidebar();
+			}
+			if ($insertString==false) {
+				$param = array('status'=>false,'message'=>"no data available or student not found to insert <br> course registration not found for the following student <br> ".implode('<br>', $unsuccessful),'backLink'=>$_SERVER['HTTP_REFERER'],'model'=>'result','school'=>$schoolData);
+			$this->load->view('uploadreport',$param);return;
+			}
+			$query ="insert into subject_score(student_subject_registration_id,ca_total,exam_score,score,ca_score1,ca_score2) values $insertString on duplicate key update ca_total =values(ca_total),score=values(ca_total)+values(exam_score),ca_score1=values(ca_score1),ca_score2=values(ca_score2)";
+			$result = $this->db->query($query);
+			$message=' data inserted successfully';
+			if (!$result) {
+				$message=' problem encountered while uploading result';
 			}
 			else{
-				$unsuccessful[]=$value[0];
-				continue;
+				if ($unsuccessful) {
+					$message='the following student records cannot be uploaded(no registration found for student <br/> '.implode(',', $unsuccessful);
+				}
+				if ($registeredStudent) {
+					$message.=" <br/> This courses was registered automatically for this following students <br/> ".implode(',', $registeredStudent);
+				}
+				//insert recored into the upload history
+				$p = array($this->webSessionManager->getCurrentuserProp('ID'),$sessionSem[0]->academic_session_id,$ss,$school_class,$course,$filePath,$this->webSessionManager->getCurrentuserProp('user_type'));
+				$query ="insert into upload_history(user_id,academic_session_id,session_term_id,school_class_id,subject_id,document_path,user_type) values(?,?,?,?,?,?,?)";
+				$this->db->query($query,$p);
 			}
-				
-		}
-		if ($this->webSessionManager->getCurrentuserProp('user_type')=='admin') {
-			$data['canView']=$this->getAdminSidebar();
-		}
-		if ($insertString==false) {
-			$param = array('status'=>false,'message'=>"no data available or student not found to insert <br> course registration not found for the following student <br> ".implode('<br>', $unsuccessful),'backLink'=>$_SERVER['HTTP_REFERER'],'model'=>'result');
-		$this->load->view('uploadreport',$param);return;
-		}
-		$query ="insert into subject_score(student_subject_registration_id,ca_total,exam_score,score,ca_score1,ca_score2) values $insertString on duplicate key update ca_total =values(ca_total),score=values(score),ca_score1=values(ca_score1),ca_score2=values(ca_score2)";
-		$result = $this->db->query($query);
-		$message=' data inserted successfully';
-		if (!$result) {
-			$message=' problem encountered while uploading result';
-		}
-		else{
-			if ($unsuccessful) {
-				$message='the following student records cannot be uploaded(no registration found for student <br/> '.implode(',', $unsuccessful);
+			$param = array('status'=>$result,'message'=>$message,'backLink'=>$_SERVER['HTTP_REFERER'],'model'=>'result','school'=>$schoolData);
+			if ($this->webSessionManager->getCurrentuserProp('user_type')=='admin') {
+				$param['canView']=$this->getAdminSidebar();
 			}
-			if ($registeredStudent) {
-				$message.=" <br/> This courses was registered automatically for this following students <br/> ".implode(',', $registeredStudent);
-			}
-			//insert recored into the upload history
-			$p = array($this->webSessionManager->getCurrentuserProp('ID'),$sessionSem[0]->academic_session_id,$ss,$school_class,$course,$filePath,$this->webSessionManager->getCurrentuserProp('user_type'));
-			$query ="insert into upload_history(user_id,academic_session_id,session_term_id,school_class_id,subject_id,document_path,user_type) values(?,?,?,?,?,?,?)";
-			$this->db->query($query,$p);
+			$this->load->view('uploadreport',$param);
+		}else{
+			redirect(base_url('vc/admin/upload_result/'));exit;
 		}
-		$param = array('status'=>$result,'message'=>$message,'backLink'=>$_SERVER['HTTP_REFERER'],'model'=>'result');
-		if ($this->webSessionManager->getCurrentuserProp('user_type')=='admin') {
-			$param['canView']=$this->getAdminSidebar();
-		}
-		$this->load->view('uploadreport',$param);
 	}
 
 	private function getAdminSidebar()

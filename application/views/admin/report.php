@@ -410,6 +410,7 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
                   </div>
                   <div>
                     <label style="margin-left: 20px">Sign/Stamp</label>
+                    <?php echo $signature; ?>
                   </div>
                 </div>
           </div>

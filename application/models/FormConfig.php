@@ -58,10 +58,19 @@ class FormConfig extends CI_Model
 
 			),
 			'role'=>array(
-				'query'=>'select * from role where ID<>1'
+				'has_upload'=>false,
+				'query'=>'select * from role where ID<>1',
+				'has_export' => false
 			),
 			'configure_report' => array(
-				'table_title' => 'Configuration Report Table'
+				'has_upload'=>false,
+				'table_title' => 'Configuration Report Table',
+				'has_export' => false
+			),
+			'signature' => array(
+				'table_title' => 'Signature Table',
+				'has_upload'=>false,
+				'has_export' => false
 			)
 		//add new entry to this array
 		);

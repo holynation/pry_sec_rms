@@ -75,7 +75,7 @@ include "template/sidebar.php";
 
           <div class="form-group ">
             <br>
-            <input class="btn btn-primary" type="submit" value='Upload Result'>
+            <input class="btn btn-primary" type="submit" value='Upload Result' name="upload_result" id="upload_result">
           </div>
 
 

@@ -163,8 +163,8 @@ $where .= ' order by ID desc ';
         <?php endif; ?>
      
         <div class="top-action pull-right">
-          <span class="main-menu-item" data-toggle='modal' data-target='#modal-add'>Add</span>
-          <?php if ($configData==false || array_key_exists('has_upload', $configData)==false || $configData['has_upload']): ?>|<span class="main-menu-item" data-toggle='modal' data-target='#modal-upload'>Batch Upload</span>
+          <span class="main-menu-item btn btn-primary" style="color: #fff;" data-toggle='modal' data-target='#modal-add'>Add</span>
+          <?php if ($configData==false || array_key_exists('has_upload', $configData)==false || $configData['has_upload']): ?>|<span class="main-menu-item btn btn-primary" style="color: #fff;" data-toggle='modal' data-target='#modal-upload'>Batch Upload</span>
           <?php endif; ?>
         </div>
 
@@ -219,7 +219,9 @@ $where .= ' order by ID desc ';
               <?php 
                 $queryString= $_SERVER['QUERY_STRING'];
                ?>
+            <?php if ($configData==false || array_key_exists('has_export', $configData)==false || $configData['has_export']): ?>
              <a target="_blank" href="<?php echo $queryString?('?'.$queryString.'&export=yes'):'?export=yes' ?>" style="margin-top: 15px;" class="btn btn-primary pull-right" id="export-btn">Export Data</a>
+            <?php endif; ?>
              <div class="clear"></div>
              <br>
             </div>
