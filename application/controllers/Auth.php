@@ -52,7 +52,7 @@ class Auth extends CI_Controller
 	}
 
 	private function getUserPage($user){
-		$link= array('admin'=>'vc/admin/dashboard');
+		$link= array('admin'=>'vc/admin/dashboard','guardian'=>'vc/guardian/dashboard');
 		$roleName = $user->user_type;
 		return $link[$roleName];
 	}

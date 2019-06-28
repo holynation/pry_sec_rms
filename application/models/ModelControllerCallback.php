@@ -19,7 +19,23 @@
 			//the user type should be student_biodata
 			loadClass($this->load,'user');
 			if ($type=='insert') {
-				$param = array('user_type'=>'admin','username'=>$data['firstname'],'password'=>md5($data['lastname']),'user_table_id'=>$data['LAST_INSERT_ID']);
+				$param = array('user_type'=>'admin','username'=>strtolower($data['firstname']),'password'=>md5(strtolower($data['lastname'])),'user_table_id'=>$data['LAST_INSERT_ID']);
+				$std = new User($param);
+				if ($std->insert($db,$message)) {
+					return true;
+				}
+				return false;
+			}
+			return true;
+		}
+
+		public function onGuardianInserted($data,$type,&$db,&$message)
+		{
+			//remember to remove the file if an error occured here
+			//the user type should be student_biodata
+			loadClass($this->load,'user');
+			if ($type=='insert') {
+				$param = array('user_type'=>'guardian','username'=>strtolower($data['surname']),'password'=>md5(strtolower($data['surname'])),'user_table_id'=>$data['LAST_INSERT_ID']);
 				$std = new User($param);
 				if ($std->insert($db,$message)) {
 					return true;

@@ -75,6 +75,11 @@ class ViewController extends CI_Controller{
 
   private function admin($page,&$data)
   {
+    // this is to permit guardian to have access to the report
+    if ($page=='report' && $this->webSessionManager->getCurrentUserProp('user_type')=='guardian') {
+      $this->load->model('custom/adminData');
+      return;
+    }
     $role_id=$this->webSessionManager->getCurrentUserProp('role_id');
     if (!$role_id) {
       show_404();
@@ -197,6 +202,19 @@ class ViewController extends CI_Controller{
 
   private function adminReport(&$data)
   {
+    // this is to permit the guardian to access the report
+    if ($this->webSessionManager->getCurrentUserProp('user_type')=='guardian') {
+      $stdID=$this->webSessionManager->getCurrentUserProp('student_biodata_id');
+      loadClass($this->load,'student_biodata');
+      $this->student_biodata->ID = $stdID;
+      $this->student_biodata->load();
+      $regNum = $this->student_biodata->registration_number;
+      if (!$regNum) {
+        $this->webSessionManager->setFlashMessage('message','we can\'t find student records');
+        header("Location:".base_url('vc/admin/result_option'));exit;
+      }
+      $_GET['reg'] = $regNum;
+    }
     $session = @$_GET['session'];
     $level = @$_GET['l'];
     $reg= @$_GET['reg'];
@@ -265,6 +283,35 @@ class ViewController extends CI_Controller{
       $data['student']=$std;
     }
     
+  }
+
+  private function guardian($page,&$data){
+    $this->load->model('custom/guardianData');
+    loadClass($this->load,'guardian');
+    $this->guardian->ID = $this->webSessionManager->getCurrentUserProp('user_table_id');
+    $this->guardian->load();
+    $this->guardianData->setGuardian($this->guardian);
+    $data['guardian']=$this->guardian;
+  }
+
+  private function guardianDashboard(&$data)
+  {
+    $data = array_merge($data,$this->guardianData->loadDashboardInfo());
+  }
+
+  private function guardianProfile(&$data){
+    if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
+      $this->admin('profile',$data);
+      if (!isset($data['id']) || !$data['id']) {
+        show_404();exit;
+      }
+      loadClass($this->load,'guardian');
+      $guardian = new Guardian(array('ID'=>$data['id']));
+      if (!$guardian->load()) {
+        show_404();exit;
+      }
+      $data['guardian']=$guardian;
+    }
   }
 
   //function for loading edit page for general application

@@ -261,6 +261,7 @@ public function getModules()
 			'children'=>array(
 				'Student'=>'vc/add/student_biodata',
 				'Admin'=>'vc/add/admin',
+				'Guardian' => 'vc/add/guardian',
 				'Role' => 'vc/add/role'
 			)
 		),
@@ -272,7 +273,8 @@ public function getModules()
 				'Term'=>'vc/add/term',
 				'School Class' => 'vc/add/school_class',
 				'Session Term' => 'vc/add/session_term',
-				'Entry Mode' => 'vc/add/entry_mode'
+				'Entry Mode' => 'vc/add/entry_mode',
+				'User title' => 'vc/add/title'
 			)
 		),
 		'Courses'=>array(

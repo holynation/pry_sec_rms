@@ -55,14 +55,23 @@ $base=base_url('assets/')
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <?php
-              loadClass($this->load,'admin');
-              $this->admin->ID = $this->webSessionManager->getCurrentUserProp('user_table_id');
-              $this->admin->load();
-              $path = @$admin->img_path;
+              $fullname='';
+              $path='';
+                if($this->webSessionManager->getCurrentUserProp('user_type') == 'admin'){
+                  if(isset($admin)){
+                    $fullname =  $admin->firstname .' '.$admin->lastname;
+                    $path = ($admin->img_path != '') ? $admin->img_path : 'assets/images/default-profile.jpg';
+                  }
+                }else if($this->webSessionManager->getCurrentUserProp('user_type') == 'guardian'){
+                  if(isset($guardian)){
+                    $fullname =  $guardian->surname .' '.$guardian->firstname;
+                    $path = ($guardian->img_path != '') ? $guardian->img_path : 'assets/images/default-profile.jpg';
+                  }
+                }
             ?>
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="<?php echo base_url($path); ?>" class="user-image" alt="user">
-              <span class="hidden-xs"><?php echo $this->webSessionManager->getUserDisplayName() ?></span>
+              <span class="hidden-xs"><?php echo $fullname; ?></span>
             </a>
             <ul class="dropdown-menu">
               <!-- Menu Footer-->

@@ -5,6 +5,8 @@
 include "template/header.php";
 if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
   include "template/sidebar.php";
+}else if($this->webSessionManager->getCurrentUserProp('user_type')=='guardian'){
+  include "template/sidebar_student.php";
 }
  ?>
  <!-- the breadcrump for pages that needed it -->

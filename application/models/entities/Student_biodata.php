@@ -182,9 +182,9 @@ function getEntry_mode_idFormField($value=''){
 		return $result;
 }
 function getImg_pathFormField($value=''){
-	$logo= base_url($value);
+	$path=  ($value != '') ? base_url($value) : "";
 	return "<div class='form-group'>
-	<img src='$logo' alt='student pic' width='200px'/> <br>
+	<img src='$path' alt='student pic' width='200px'/>
 	<label for='img_path' >Student Profile</label>
 		<input type='file' name='img_path' id='img_path' value='$value' class='form-control'  />
 </div> ";
@@ -323,6 +323,15 @@ public function getStudentRegisteringLevel($session)
 	$result = $this->query($query);
 	$id = $result[0]['id'];
 	return ($id)?$id:1;
+}
+
+public function getClassAt($session,$id=null)
+{
+	$id = ($id) ? $id : $this->ID;
+	$query="select distinct school_class_id from student_session_history where student_biodata_id=? and academic_session_id=?";
+	$result = $this->query($query,array($id,$session));
+	$currentLevel = @$result[0]['school_class_id'];
+	return $currentLevel?$currentLevel:$this->getStudentRegisteringLevel($session);
 }
 
 //return the student result for a particular session

@@ -71,6 +71,12 @@ class FormConfig extends CI_Model
 				'table_title' => 'Signature Table',
 				'has_upload'=>false,
 				'has_export' => false
+			),
+			'title'=>array(
+				'has_upload'=>false
+			),
+			'guardian'=>array(
+				'has_upload'=>false
 			)
 		//add new entry to this array
 		);
