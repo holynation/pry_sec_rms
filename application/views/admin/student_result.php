@@ -58,7 +58,7 @@ include "template/sidebar.php";
               </div>
               <div class="form-group col-sm-3 col-md-3">
                   <label for="">School Class</label>
-                  <select class="form-control autoload" data-child='reg' data-load='studentIn' data-depend='session' name="l" id="class" required=""> 
+                  <select class="form-control autoload" data-child='reg' data-load='studentIn' data-depend='session,term' name="l" id="class" required="">
                       <option value="">..select class..</option>
                       <?php echo buildOptionFromQuery($this->db,'select id,class_name as value from school_class'); ?>
                   </select>
@@ -80,11 +80,13 @@ include "template/sidebar.php";
             
           <div>
             <?php if (@$student): ?>
+              <?php if (@$result): ?>
               <h3><?php echo strtoupper($student->fullname); ?> RESULT
                 <button data-toggle='modal' data-target='#modal-add' class="btn btn-success pull-right"style="margin-bottom: 15px;"> 
                   <i class="fa fa-plus"></i> Add Result
                 </button>
               </h3>
+              <?php endif; ?>
               <?php 
 
               $action = array('delete'=>'delete/subject_score','edit'=>'edit/subject_score');

@@ -78,10 +78,10 @@ include "template/sidebar.php";
           $gradeScale = new Grade_scale();
           $session = @$ses->academic_session_id;
           $where = (isset($_GET['reg']) && $_GET['reg'])?" and  registration_number like '%{$_GET['reg']}%'":'';
-          $pg=@$_GET['pg'];
+          $pg=@$_GET['class'];
           if ($pg) {
             $pg=$this->db->conn_id->escape_string($pg);
-            $where.=" and student_biodata.school_class_id=$pg";
+            $where.=" and student_subject_registration.school_class_id='$pg'";
           }
           
           $query ="select concat_ws(' ',surname,firstname,middlename) as student_name ,registration_number,ca_total,exam_score,(ca_total + exam_score) as total,grade,point from subject_score join student_subject_registration on student_subject_registration.id = subject_score.student_subject_registration_id join student_biodata on student_biodata.id =student_subject_registration.student_biodata_id  join academic_session on academic_session.id = student_subject_registration.academic_session_id  join term on term.id = student_subject_registration.term_id join session_term on session_term.academic_session_id = academic_session.id and session_term.term_id = term.id left join grade_scale on (ca_total + exam_score) between grade_scale.min_score and grade_scale.max_score where  student_subject_registration.subject_id=? and session_term.id=? $where";

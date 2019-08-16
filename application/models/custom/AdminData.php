@@ -31,7 +31,7 @@ class AdminData extends CI_Model
 		$result = array();
 		$extraReport = $student->loadReport($endSession,$class,$sessionTerm,$student);
 		foreach ($allstudentSession as $session){
-			$result[$session['session_name']]=$student->getResultData($session['ID'],$sessionTerm,$resultCount,$totalPercentage);
+			$result[$session['session_name']]=$student->getResultData($session['ID'],$sessionTerm,$resultCount,$totalPercentage,$class);
 		}
 		return $result;
 	}

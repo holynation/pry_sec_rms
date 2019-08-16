@@ -82,12 +82,20 @@
 			}
 		}
 
-		public function studentIn($class,$session,$sessionTerm='')
+		public function entryModeIn($entryMode){
+			$entryMode  = trim($entryMode);
+			$query = "SELECT school_class.id,class_name as value from entry_mode left join school_class on entry_mode.school_class_id = school_class.id where entry_mode.id = ?";
+			echo $this->returnJsonFromQueryResult($query,array($entryMode));
+		}
+
+		public function studentIn($class,$session,$term='')
 		{
 			//the escaping is to prevent sql injection attack
 			$class = $this->db->conn_id->escape_string($class);
 			$session = $this->db->conn_id->escape_string($session);
-			$query="SELECT student.registration_number as id, concat_ws(' ',surname,' ',firstname,' ',middlename,' (',registration_number,')') as value from student_biodata student join student_session_history on student.id=student_session_history.student_biodata_id where student_session_history.school_class_id=$class and student_session_history.academic_session_id=$session and student.school_class_id = $class order by student.registration_number asc";
+			$term = $this->db->conn_id->escape_string($term);
+			$query="SELECT student.registration_number as id, concat_ws(' ',surname,' ',firstname,' ',middlename,' (',registration_number,')') as value from student_biodata student join student_session_history on student.id=student_session_history.student_biodata_id where student_session_history.academic_session_id='$session' and student_session_history.school_class_id = '$class' order by student.registration_number asc";
+			// and exists (select ssr.academic_session_id,session_term_id,student_biodata_id from student_subject_registration ssr join student_biodata on ssr.student_biodata_id = student_biodata.id where ssr.academic_session_id='$session' and ssr.session_term_id='$term' and ssr.school_class_id = '$class')
 			echo $this->returnJsonFromQueryResult($query,array($class,$session));
 
 		}

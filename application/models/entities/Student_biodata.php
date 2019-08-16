@@ -17,7 +17,7 @@ static $uploadDependency = array();
 static $displayField = 'registration_number';// this display field properties is used as a column in a query if a their is a relationship between this table and another table.In the other table, a field showing the relationship between this name having the name of this table i.e something like this. table_id. We cant have the name like this in the table shown to the user like table_id so the display field is use to replace that table_id.However,the display field name provided must be a column in the table to replace the table_id shown to the user,so that when the other model queries,it will use that field name as a column to be fetched along the query rather than the table_id alone.;
 static $uniqueArray = array('registration_number');
 /* this is an associative array containing the fieldname and the type of the field*/ 
-static $typeArray = array('surname' => 'varchar','firstname' => 'varchar','middlename' => 'varchar','dob' => 'date','email' => 'text','phone_number' => 'text','gender' => 'varchar','address' => 'text','state_of_origin' => 'varchar','lga_of_origin' => 'varchar','registration_number' => 'varchar','school_class_id' => 'int','entry_mode_id'=>'int','academic_session_id' => 'int','img_path' => 'varchar','nationality' => 'varchar','status' => 'tinyint','religion' => 'enum');
+static $typeArray = array('surname' => 'varchar','firstname' => 'varchar','middlename' => 'varchar','dob' => 'date','email' => 'text','phone_number' => 'text','gender' => 'varchar','address' => 'text','state_of_origin' => 'varchar','lga_of_origin' => 'varchar','registration_number' => 'varchar','entry_mode_id'=>'int','school_class_id' => 'int','academic_session_id' => 'int','img_path' => 'varchar','nationality' => 'varchar','status' => 'tinyint','religion' => 'enum');
 /*this is a dictionary that map a field name with the label name that will be shown in a form*/ 
 static $labelArray = array('ID' => '','surname' => '','firstname' => '','middlename' => '','dob' => '','email' => '','phone_number' => '','gender' => '','address' => '','state_of_origin' => '','lga_of_origin' => '','registration_number' => '','school_class_id' => '','entry_mode_id'=>'','academic_session_id' => '','img_path' => '','nationality' => '','status' => '','religion' => '');
 /*associative array of fields that have default value*/ 
@@ -119,6 +119,26 @@ function getLga_of_originFormField($value=''){
 				<label for='registration_number'>Registration Number</label>
 				<input type='text' name='registration_number' id='registration_number' value='$value' class='form-control' required />
 			</div>";
+}
+function getEntry_mode_idFormField($value=''){
+	$fk= array('table'=>'entry_mode','display'=>'mode_of_entry'); 
+
+	if (is_null($fk)) {
+		return $result="<input type='hidden' value='$value' name='entry_mode_id' id='entry_mode_id' class='form-control' />
+			";
+	}
+	if (is_array($fk)) {
+		$result ="<div class='form-group'>
+		<label for='entry_mode_id'>Entry Mode</label>";
+		$option = $this->loadOption($fk,$value);
+		//load the value from the given table given the name of the table to load and the display field
+		$result.="<select name='entry_mode_id' id='entry_mode_id' class='form-control autoload' data-load='entryModeIn' data-child='school_class_id' >
+			$option
+		</select>";
+	}
+	$result.="</div>";
+	return  $result;
+
 } 
  function getSchool_class_idFormField($value = ''){
 	$fk= array('table'=>'school_class','display'=>'class_name');  
@@ -135,32 +155,13 @@ function getLga_of_originFormField($value=''){
 			$option = $this->loadOption($fk,$value);
 			//load the value from the given table given the name of the table to load and the display field
 			$result.="<select name='school_class_id' id='school_class_id' class='form-control'>
-						$option
+						
 					</select>";
 		}
 		$result.="</div>";
 		return $result;
 }
-function getEntry_mode_idFormField($value=''){
-	$fk= array('table'=>'entry_mode','display'=>'mode_of_entry'); 
 
-	if (is_null($fk)) {
-		return $result="<input type='hidden' value='$value' name='entry_mode_id' id='entry_mode_id' class='form-control' />
-			";
-	}
-	if (is_array($fk)) {
-		$result ="<div class='form-group'>
-		<label for='entry_mode_id'>Entry Mode</label>";
-		$option = $this->loadOption($fk,$value);
-		//load the value from the given table given the name of the table to load and the display field
-		$result.="<select name='entry_mode_id' id='entry_mode_id' class='form-control'>
-			$option
-		</select>";
-	}
-	$result.="</div>";
-	return  $result;
-
-}
  function getAcademic_session_idFormField($value = ''){
 	$fk=array('table'=>'academic_session','display'=>'session_name');
 
@@ -335,12 +336,13 @@ public function getClassAt($session,$id=null)
 }
 
 //return the student result for a particular session
-public function getStudentResult($session,$term)
+public function getStudentResult($session,$term,$class='')
 {
 	$session = $this->db->conn_id->escape_string($session);
 	$term = $this->db->conn_id->escape_string($term);
-	$query ="SELECT DISTINCT subject_score.ID, subject_title,ca_score1,ca_score2,exam_score,score,grade,point from student_subject_registration join subject sub on sub.id= student_subject_registration.subject_id join upload_history on upload_history.subject_id=sub.id and upload_history.academic_session_id=$session join subject_score on student_subject_registration.id = subject_score.student_subject_registration_id  left join grade_scale on score between min_score and max_score where student_subject_registration.academic_session_id=? and student_biodata_id=? and student_subject_registration.term_id = ? order by subject_title asc";
-	$result = $this->query($query,array($session,$this->ID,$term));
+	$class = $this->db->conn_id->escape_string($class);
+	$query ="SELECT DISTINCT subject_score.ID, subject_title,ca_score1,ca_score2,exam_score,score,grade,point from student_subject_registration join subject sub on sub.id= student_subject_registration.subject_id join upload_history on upload_history.subject_id=sub.id and upload_history.academic_session_id=$session join subject_score on student_subject_registration.id = subject_score.student_subject_registration_id  left join grade_scale on score between min_score and max_score where student_subject_registration.academic_session_id=? and student_biodata_id=? and student_subject_registration.term_id = ? and student_subject_registration.school_class_id = ? order by subject_title asc";
+	$result = $this->query($query,array($session,$this->ID,$term,$class));
 	return $result;
 }
 
@@ -379,20 +381,24 @@ public function getSpentSessionTill($session)
 	return $this->query($query,array($session,$this->ID));
 }
 
-public function getStudentResultPerTerm($session,$sessionTerm,&$resultCount=0)
+public function getStudentResultPerTerm($session,$sessionTerm,&$resultCount=0,$class='')
 {
 	$session = $this->db->conn_id->escape_string($session);
 	$sessionTerm = $this->db->conn_id->escape_string($sessionTerm);
-	$query ="SELECT DISTINCT subject_score.ID,subject_title,ca_score1,ca_score2,exam_score,score,grade,point from student_subject_registration join subject sub on sub.id= student_subject_registration.subject_id join upload_history on upload_history.subject_id=sub.id and upload_history.academic_session_id=$session join subject_score on student_subject_registration.id = subject_score.student_subject_registration_id  left join grade_scale on score between min_score and max_score where student_subject_registration.academic_session_id=? and student_subject_registration.term_id = ? and student_biodata_id=? order by subject_title asc";
-	$result = $this->query($query,array($session,$sessionTerm,$this->ID));
+	$class = $this->db->conn_id->escape_string($class);
+	$query ="SELECT DISTINCT subject_score.ID,subject_title,ca_score1,ca_score2,exam_score,score,grade,point from student_subject_registration join subject sub on sub.id= student_subject_registration.subject_id join upload_history on upload_history.subject_id=sub.id and upload_history.academic_session_id=$session join subject_score on student_subject_registration.id = subject_score.student_subject_registration_id  left join grade_scale on score between min_score and max_score where student_subject_registration.academic_session_id=? and student_subject_registration.term_id = ? and student_biodata_id=? and student_subject_registration.school_class_id = ? order by subject_title asc";
+	$result = $this->query($query,array($session,$sessionTerm,$this->ID,$class));
 	$resultCount = ($result) ? count($result) : 0;
 	return $result;
 }
 
-public function getTotalPercentageScore($session,$sessionTerm,$resultCount)
+public function getTotalPercentageScore($session,$sessionTerm,$resultCount,$class='')
 {
 	$totalScore = 0;
-	$resultScore = $this->getStudentResultPerTerm($session,$sessionTerm,$resultCount);
+	$resultScore = $this->getStudentResultPerTerm($session,$sessionTerm,$resultCount,$class);
+	if(!$resultScore){
+		return false;
+	}
 	foreach($resultScore as $score){
 		$totalScore +=$score['score'];
 	}
@@ -401,11 +407,11 @@ public function getTotalPercentageScore($session,$sessionTerm,$resultCount)
 	return $result;
 }
 
-public function getResultData($session,$sessionTerm,&$resultCount=0,&$totalPercentage)
+public function getResultData($session,$sessionTerm,&$resultCount=0,&$totalPercentage,$class='')
 {
 	$result=array();
-	$result['result']=$this->getStudentResultPerTerm($session,$sessionTerm,$resultCount);
-	$totalPercentage = $this->getTotalPercentageScore($session,$sessionTerm,$resultCount);
+	$result['result']=$this->getStudentResultPerTerm($session,$sessionTerm,$resultCount,$class);
+	$totalPercentage = $this->getTotalPercentageScore($session,$sessionTerm,$resultCount,$class);
 	return $result;
 }
 

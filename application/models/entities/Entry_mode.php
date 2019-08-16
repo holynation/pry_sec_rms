@@ -56,7 +56,7 @@ function getMode_of_entryFormField($value = ''){
 		if(is_array($fk)){
 			
 			$result ="<div class='form-group'>
-			<label for='school_class_id'>Start School Class</label>";
+			<label for='school_class_id'>School Start Class</label>";
 			$option = $this->loadOption($fk,$value);
 			//load the value from the given table given the name of the table to load and the display field
 			$result.="<select name='school_class_id' id='school_class_id' class='form-control'>

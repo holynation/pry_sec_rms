@@ -46,7 +46,7 @@ class FormConfig extends CI_Model
 				'table_exclude'=>array('img_path'),
 				'table_action'=>array('delete'=>'delete/student_biodata','edit'=>'edit/student_biodata','profile'=>'vc/student/profile'),
 				'search'=>array('firstname','middlename','surname','registration_number'),
-				'query'=>"select distinct student.ID,surname,firstname,middlename,(select session_name from academic_session where id=student.academic_session_id) as entry_session,state_of_origin,lga_of_origin,dob as date_of_birth,email,phone_number,gender,address,registration_number from student_biodata student left join school_class on school_class.id= student.school_class_id left join student_session_history on student.id=student_session_history.student_biodata_id left join academic_session on academic_session.id=student_session_history.academic_session_id "
+				'query'=>"select distinct student.ID,surname,firstname,middlename,(select session_name from academic_session where id=student.academic_session_id) as entry_session,mode_of_entry,state_of_origin,lga_of_origin,dob as date_of_birth,email,phone_number,gender,address,registration_number from student_biodata student left join entry_mode on student.entry_mode_id = entry_mode.id left join school_class on school_class.id= student.school_class_id left join student_session_history on student.id=student_session_history.student_biodata_id left join academic_session on academic_session.id=student_session_history.academic_session_id "
 			),
 			'admin'=>array
 			(

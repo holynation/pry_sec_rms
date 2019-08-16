@@ -148,12 +148,13 @@ class ViewController extends CI_Controller{
   private function adminStudent_result(&$data)
   {
     if (isset($_GET['reg']) && $_GET['reg'] && isset($_GET['session']) && $_GET['session'] && isset($_GET['term']) && $_GET['term']) {
+      $class = trim($_GET['l']);
       loadClass($this->load,'student_biodata');
       $student = $this->student_biodata->getWhere(array('registration_number'=>$_GET['reg']),$c,0,null,false);
       if($student){
         $student = @$student[0];
         $data['student']=$student;
-        $data['result']=$student->getStudentResult($_GET['session'],$_GET['term']);
+        $data['result']=$student->getStudentResult($_GET['session'],$_GET['term'],$class);
       }
       
     }
@@ -214,7 +215,7 @@ class ViewController extends CI_Controller{
         header("Location:".base_url('vc/admin/result_option'));exit;
       }
       $_GET['reg'] = $regNum;
-    }
+    } // end guardian permission
     $session = @$_GET['session'];
     $level = @$_GET['l'];
     $reg= @$_GET['reg'];
@@ -226,7 +227,7 @@ class ViewController extends CI_Controller{
     loadClass($this->load,'student_biodata');
     $students = $reg?$this->student_biodata->getWhere(array('registration_number'=>$reg),$c,0,null,false):$this->student_biodata->getStudentIn($level,$session);
     if ($students==false) {
-      $this->webSessionManager->setFlashMessage('message','can\'t find student records');
+      $this->webSessionManager->setFlashMessage('message','can\'t find student records...');
       header("Location:".base_url('vc/admin/result_option'));exit;
     }
     $sess = (isset($_GET['session']) && $_GET['session'])?$_GET['session']:$this->webSessionManager->getCurrentSession();

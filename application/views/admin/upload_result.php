@@ -46,7 +46,7 @@ include "template/sidebar.php";
                 <label for="">Session Term</label>
                 <select class="form-control" name="session_term" id="session_term">
                   <option value="">..choose session</option>
-                  <?php echo buildOptionFromQuery($this->db,"select session_term.id,concat(session_name,' (',term_name,')') as value from session_term join academic_session on academic_session.id=session_term.academic_session_id join term on term.id=session_term.term_id order by session_term.term_id desc"); ?>
+                  <?php echo buildOptionFromQuery($this->db,"select session_term.id,concat(session_name,' (',term_name,')') as value from session_term join academic_session on academic_session.id=session_term.academic_session_id join term on term.id=session_term.term_id order by academic_session.start_date desc"); ?>
                 </select>
               </div>
               <div class="form-group col-lg-4">

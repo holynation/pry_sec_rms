@@ -224,6 +224,8 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
             <?php endif; ?>
           <?php endforeach; ?>
           </div>
+          <!-- this begins the behaviour tabel display for the report -->
+        <?php if($this->webSessionManager->getCurrentUserProp('user_type') == 'admin'): ?>
           <div class="table-wrapper-right">
             <table border='1' class="result-table" width="100%">
                <thead>
@@ -378,9 +380,12 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
                </tbody>
             </table>
           </div>
+        <?php endif; ?>
+          <!-- end the behaviour table -->
            <div class="clearfix"></div>
       </div>
        <!-- space -->
+       <?php if(@$extraReport): ?>
         <div class="rows">
           <div class="t-right">
                <div style="display: flex;flex-direction: row;">
@@ -483,17 +488,11 @@ if ($this->webSessionManager->getCurrentUserProp('user_type')=='admin') {
           <div class="clearfix"></div>
         </div>
 
-         <div class="row">
-          <?php if(@$extraReport): ?>
-          <div class="col-md-8" style="margin-bottom:20px;">
-         
-          </div>
-          <?php else: ?>
+        <?php else: ?>
             <div class="alert alert-danger">
               <p>Please go to the Configure Report Section to state the Report Configuration...</p>
             </div>
           <?php endif; ?>
-        </div>
       </div>
      
         
