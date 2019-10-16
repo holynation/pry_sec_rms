@@ -355,7 +355,6 @@ public function getRegistration($session,$term)
 
 public function getStudentIn($level,$session)
 {
-// http://206.189.22.83:3838/
 	$query="select student_biodata.* from student_biodata join student_session_history on student_biodata.id=student_session_history.student_biodata_id where student_session_history.school_class_id=? and student_session_history.academic_session_id=? order by student_biodata.registration_number asc";
 	$result = $this->query($query,array($level,$session));
 	if (!$result) {
@@ -377,8 +376,38 @@ public function countGetStudentIn($level,$session)
 
 public function getSpentSessionTill($session)
 {
-	$query = "select distinct academic_session.* from student_session_history join academic_session on academic_session.ID=student_session_history.academic_session_id join student_subject_registration scr on academic_session.ID=scr.academic_session_id  where exists (select * from subject_score where student_subject_registration_id =scr.ID) AND academic_session.start_date =(select start_date from academic_session where ID=?) and student_session_history.student_biodata_id=? order by start_date";
+	$query = "select distinct academic_session.* from student_session_history join academic_session on academic_session.ID=student_session_history.academic_session_id join student_subject_registration scr on academic_session.ID=scr.academic_session_id where exists (select * from subject_score where student_subject_registration_id =scr.ID) AND academic_session.start_date =(select start_date from academic_session where ID=?) and student_session_history.student_biodata_id=? order by start_date";
 	return $this->query($query,array($session,$this->ID));
+}
+
+public function getReportResult($session,$term=false,$class=''){
+	$result = $term ? $this->getStudentResultPerTerm($session,$term,$resultCount,$class): "";
+	if (!$result) {
+		return false;
+	}
+	$return = array();
+	foreach ($result as $res) {
+		$return[$res['subject_title']]=$res;
+	}
+	return $return;
+}
+
+public function getPreviousResult($session,$class,$subject){
+	$session = $this->db->conn_id->escape_string($session);
+	$class = $this->db->conn_id->escape_string($class);
+	$subject = $this->db->conn_id->escape_string($subject);
+	$isLast = "1";
+	$query = "SELECT DISTINCT ssr.ID,score from student_subject_registration ssr left join subject_score on ssr.ID = subject_score.student_subject_registration_id where ssr.academic_session_id = ? and ssr.school_class_id = ? and student_biodata_id = ? and ssr.term_id <> (select id from term where is_last = $isLast) and ssr.subject_id in (select id from subject where subject_title like '%$subject%') order by term_id asc limit 2";
+	$result = $this->query($query,array($session,$class,$this->ID));
+	$return = array();
+	foreach($result as $key => $value){
+		if($key == 0){
+			$return[]['firstTermScore'] = $value;
+		}else{
+			$return[]['secondTermScore'] = $value;
+		}
+	}
+	return $return;
 }
 
 public function getStudentResultPerTerm($session,$sessionTerm,&$resultCount=0,$class='')
@@ -386,9 +415,20 @@ public function getStudentResultPerTerm($session,$sessionTerm,&$resultCount=0,$c
 	$session = $this->db->conn_id->escape_string($session);
 	$sessionTerm = $this->db->conn_id->escape_string($sessionTerm);
 	$class = $this->db->conn_id->escape_string($class);
-	$query ="SELECT DISTINCT subject_score.ID,subject_title,ca_score1,ca_score2,exam_score,score,grade,point from student_subject_registration join subject sub on sub.id= student_subject_registration.subject_id join upload_history on upload_history.subject_id=sub.id and upload_history.academic_session_id=$session join subject_score on student_subject_registration.id = subject_score.student_subject_registration_id  left join grade_scale on score between min_score and max_score where student_subject_registration.academic_session_id=? and student_subject_registration.term_id = ? and student_biodata_id=? and student_subject_registration.school_class_id = ? order by subject_title asc";
+	$query ="SELECT DISTINCT student_subject_registration.ID,subject_title,ca_score1,ca_score2,exam_score,score,grade,grade_scale.point,grade_scale.remark from student_subject_registration join subject sub on sub.id= student_subject_registration.subject_id join upload_history on upload_history.subject_id=sub.id and upload_history.academic_session_id=$session join subject_score on student_subject_registration.id = subject_score.student_subject_registration_id left join grade_scale on score between min_score and max_score where student_subject_registration.academic_session_id=? and student_subject_registration.term_id = ? and student_biodata_id=? and student_subject_registration.school_class_id = ? order by subject_title asc";
 	$result = $this->query($query,array($session,$sessionTerm,$this->ID,$class));
 	$resultCount = ($result) ? count($result) : 0;
+	return $result;
+}
+
+public function getStudentTestPerTerm($session,$sessionTerm,$class='',$type='')
+{
+	$session = $this->db->conn_id->escape_string($session);
+	$sessionTerm = $this->db->conn_id->escape_string($sessionTerm);
+	$class = $this->db->conn_id->escape_string($class);
+	$type = $this->db->conn_id->escape_string($type);
+	$query ="SELECT DISTINCT test_score.ID,subject_title,ca1_score,ca2_score,ca_total,ca_percentage,test_score.ca_type,grade,grade_scale.point,grade_scale.remark from student_subject_registration join subject sub on sub.id= student_subject_registration.subject_id join upload_history on upload_history.subject_id=sub.id and upload_history.academic_session_id=$session join test_score on student_subject_registration.id = test_score.student_subject_registration_id left join grade_scale on ca_percentage between min_score and max_score where test_score.ca_type = ? and student_subject_registration.academic_session_id=? and student_subject_registration.term_id = ? and student_biodata_id=? and student_subject_registration.school_class_id = ? order by subject_title asc";
+	$result = $this->query($query,array($type,$session,$sessionTerm,$this->ID,$class));
 	return $result;
 }
 
@@ -412,6 +452,13 @@ public function getResultData($session,$sessionTerm,&$resultCount=0,&$totalPerce
 	$result=array();
 	$result['result']=$this->getStudentResultPerTerm($session,$sessionTerm,$resultCount,$class);
 	$totalPercentage = $this->getTotalPercentageScore($session,$sessionTerm,$resultCount,$class);
+	return $result;
+}
+
+public function getTestData($session,$sessionTerm,$class,$type='')
+{
+	$result=array();
+	$result['result']=$this->getStudentTestPerTerm($session,$sessionTerm,$class,$type);
 	return $result;
 }
 

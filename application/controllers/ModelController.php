@@ -685,13 +685,15 @@ class ModelController extends CI_Controller
 		$this->session->set_flashdata('message',$message);
 		header("location:$location");
 	}
-	function result_template(){
+	function result_template($type=''){
 		//validate permission here too.
-		$fields = array('registration number','CA1','CA2','CA TOTAL','EXAM TOTAL','TOTAL');
-		// $fields = array_unique($fields);
+		$testFields = array('registration number','CA1_score','CA2_score','CA TOTAL');
+		$examFields = array('registration number','CA1','CA2','CA TOTAL','EXAM TOTAL','TOTAL');
+		$fields = (trim($type) == 'test') ? $testFields : $examFields; 
 		$content = singleRowToCsvString($fields);
 		$header = 'text/csv';
-		sendDownload($content,$header,'result_upload_template');
+		$name = "result_".$type."_upload_template";
+		sendDownload($content,$header,$name);
 	}
 
 	//function for downloading data template
@@ -736,8 +738,15 @@ class ModelController extends CI_Controller
 		    $schoolData=$this->school->all($total,false);
 		    $schoolData = ($schoolData) ? $schoolData[0] : "System";
 
-			if(empty($_POST['session_term']) || empty($_POST['school_class']) || empty($_POST['subject'])){
-				$param = array('status'=>false,'message'=>'Please fill the required field for uploading of result','backLink'=>$_SERVER['HTTP_REFERER'],'model'=>'result','school'=>$schoolData);
+		    $errMessage = '';
+		    $param = '';
+		    $uploadType = $_POST['upload_type'];
+
+			if(empty($uploadType) || empty($_POST['session_term']) || empty($_POST['school_class']) || empty($_POST['subject'])){
+				$errMessage = 'Please fill the required field for uploading of result';
+				$param = array('status'=>false,'message'=>$errMessage,'backLink'=>$_SERVER['HTTP_REFERER'],'model'=>'result','school'=>$schoolData);
+			}
+			if($errMessage != ''){
 				$this->load->view('uploadreport',$param);return;
 			}
 
@@ -751,8 +760,8 @@ class ModelController extends CI_Controller
 			loadClass($this->load,'subject');
 			$this->subject->ID=$course;
 			$this->subject->load();
-			$courseCode = $this->subject->subject_title;
-			$filePath.='_'.$courseCode.'_'.date('y-m-d h-i-s').'.csv';
+			$courseCode = str_replace('/', '_',$this->subject->subject_title);
+			$filePath.='_'.$courseCode.'_'.$uploadType.'_'.date('y-m-d h-i-s').'.csv';
 
 			$content = $this->loadUploadedFileContent($filePath);
 			$content = trim($content);
@@ -765,15 +774,30 @@ class ModelController extends CI_Controller
 			$registeredStudent=array();
 			$sessionTermSubject=$course;
 
-			$ca1Index = array_search('CA1', $header);
-			$ca2Index = array_search('CA2', $header);
-			$caIndex=array_search('CA TOTAL', $header);
-			$examIndex= array_search('EXAM TOTAL', $header);
-			$regIndex = array_search('registration number', $header);
-			$totalIndex = array_search('TOTAL', $header);
+			// extracting the header
+			if($uploadType == 'test_upload'){
+				$test_type = $_POST['test_type'];
+				$ca1Index = array_search('CA1_score', $header);
+				$ca2Index = array_search('CA2_score', $header);
+				$caTotalIndex = array_search('CA TOTAL', $header);
+				$regIndex = array_search('registration number', $header);
+			}else{
+				$ca1Index = array_search('CA1', $header);
+				$ca2Index = array_search('CA2', $header);
+				$caIndex = array_search('CA TOTAL', $header);
+				$examIndex = array_search('EXAM TOTAL', $header);
+				$regIndex = array_search('registration number', $header);
+				$totalIndex = array_search('TOTAL', $header);
+			}
 
-			if ($ca1Index === false || $ca2Index === false || $totalIndex===false || $regIndex===false || $examIndex===false||$caIndex==false) {
-				exit("invalid template file. go back and download the real template then try again.");
+			if($uploadType == 'test_upload'){
+				if ($ca1Index === false || $ca2Index === false || $caTotalIndex===false || $regIndex===false) {
+					exit("Invalid template file. go back and download the real <b>test</b> template, then try again.");
+				}
+			}else{
+				if ($ca1Index === false || $ca2Index === false || $totalIndex===false || $regIndex===false || $examIndex===false||$caIndex==false) {
+					exit("Invalid template file. go back and download the real <b>exam</b> template, then try again.");
+				}
 			}
 			//validate later here
 			loadClass($this->load,'student_biodata');
@@ -782,18 +806,30 @@ class ModelController extends CI_Controller
 				if (!$this->student_biodata->getWhere(array('registration_number'=>$regNum),$c,0,null,false)) {
 					continue;
 				}
-				$ca1 = floatval($value[$ca1Index]);
-				$ca2 = floatval($value[$ca2Index]);
-				$ca = floatval($value[$caIndex]);
-				$exam = floatval($value[$examIndex]);
-				$total = floatval($ca+$exam);
-				$fileTotal = floatval($value[$totalIndex]);
-				if ($total!=$fileTotal) {
-					exit("sorry, score did not add up at row ".($key+1)." please try again");
+				if($uploadType == 'test_upload'){
+					$ca1 = floatval($value[$ca1Index]);
+					$ca2 = floatval($value[$ca2Index]);
+					$total = floatval($ca1+$ca2);
+					$totalPercentage = floatval($total * 5);
+					$fileTotal = floatval($value[$caTotalIndex]);
+					if ($total!=$fileTotal) {
+						exit("sorry, score did not add up at row ".($key+1)." please try again");
+					}
+				}else{
+					$ca1 = floatval($value[$ca1Index]);
+					$ca2 = floatval($value[$ca2Index]);
+					$ca = floatval($value[$caIndex]);
+					$exam = floatval($value[$examIndex]);
+					$total = floatval($ca+$exam);
+					$fileTotal = floatval($value[$totalIndex]);
+					if ($total!=$fileTotal) {
+						exit("sorry, score did not add up at row ".($key+1)." please try again");
+					}
+					if ($total > 100) {
+						exit("sorry, total score at row ".($key+1)." is greater than 100 please check and try again");
+					}
 				}
-				if ($total > 100) {
-					exit("sorry, total score at row ".($key+1)." is greater than 100 please check and try again");
-				}
+				
 
 				if (isset($_POST['auto-register'])) {
 					if($this->registerStudent($regNum,$sessionTermSubject,$ss,$sessionSem[0]->academic_session_id,$school_class)){
@@ -802,7 +838,12 @@ class ModelController extends CI_Controller
 						if ($insertString) {
 							$insertString.=',';
 						}
-						$insertString.=" ('$regCourse','$ca','$exam','$total','$ca1','$ca2')";
+						if($uploadType == 'test_upload'){
+							$insertString.=" ('$ca1','$ca2','$total','$totalPercentage','$test_type','$regCourse')";
+						}else{
+							$insertString.=" ('$regCourse','$ca','$exam','$total','$ca1','$ca2')";
+						}
+						
 					}
 					else{
 						$unsuccessful[]=$value[0];
@@ -812,17 +853,22 @@ class ModelController extends CI_Controller
 				else{
 					$unsuccessful[]=$value[0];
 					continue;
-				}
-					
+				}					
 			}
 			if ($this->webSessionManager->getCurrentuserProp('user_type')=='admin') {
 				$data['canView']=$this->getAdminSidebar();
 			}
 			if ($insertString==false) {
 				$param = array('status'=>false,'message'=>"no data available or student not found to insert <br> course registration not found for the following student <br> ".implode('<br>', $unsuccessful),'backLink'=>$_SERVER['HTTP_REFERER'],'model'=>'result','school'=>$schoolData);
-			$this->load->view('uploadreport',$param);return;
+				$this->load->view('uploadreport',$param);return;
 			}
-			$query ="insert into subject_score(student_subject_registration_id,ca_total,exam_score,score,ca_score1,ca_score2) values $insertString on duplicate key update ca_total =values(ca_total),score=values(ca_total)+values(exam_score),ca_score1=values(ca_score1),ca_score2=values(ca_score2)";
+			
+			if($uploadType == 'test_upload'){
+				$query ="insert into test_score(ca1_score,ca2_score,ca_total,ca_percentage,ca_type,student_subject_registration_id) values $insertString on duplicate key update ca_total = values(ca_total),ca1_score=values(ca1_score),ca2_score=values(ca2_score),ca_percentage=values(ca_percentage),ca_type=values(ca_type)";
+			}else{
+				$query ="insert into subject_score(student_subject_registration_id,ca_total,exam_score,score,ca_score1,ca_score2) values $insertString on duplicate key update ca_total =values(ca_total),score=values(ca_total)+values(exam_score),ca_score1=values(ca_score1),ca_score2=values(ca_score2)";
+			}
+
 			$result = $this->db->query($query);
 			$message=' data inserted successfully';
 			if (!$result) {

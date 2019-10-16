@@ -37,8 +37,17 @@ function getSubject_titleFormField($value = ''){
 				<label for='subject_title'>Subject Title</label>
 				<input type='text' name='subject_title' id='subject_title' value='$value' class='form-control' required />
 			</div>";
-} 
+}
 
+public function getSubjectOffered($session,$level,$term=false){
+	$temp='';
+	if ($term) {
+		$temp=" and ssr.term_id = $term ";
+	}
+	$query = "SELECT DISTINCT ID,subject_title from subject where ID in (select subject_id from student_subject_registration ssr where ssr.academic_session_id=? and ssr.school_class_id=? $temp) order by subject_title asc ";
+	$result = $this->query($query,array($session,$level));
+	return $result;
+} 
 
  
 }

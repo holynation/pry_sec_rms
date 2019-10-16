@@ -24,15 +24,53 @@ class AdminData extends CI_Model
 		return $result;
 	}
 
-	public function getStudentResultData($student,$endSession,$sessionTerm,$class,&$extraReport,&$resultCount=0,&$totalPercentage)
+	public function getStudentResultData($student,$endSession,$sessionTerm,$class,&$extraReport='',&$resultCount=0,&$totalPercentage='')
 	{
+		$result = array();
 		loadClass($this->load,'student_session_history');
 		$allstudentSession = $student->getSpentSessionTill($endSession);
-		$result = array();
 		$extraReport = $student->loadReport($endSession,$class,$sessionTerm,$student);
 		foreach ($allstudentSession as $session){
 			$result[$session['session_name']]=$student->getResultData($session['ID'],$sessionTerm,$resultCount,$totalPercentage,$class);
 		}
+
+		return $result;
+	}
+
+	public function getStudentTestData($student,$endSession,$sessionTerm,$class,$type='')
+	{
+		loadClass($this->load,'student_session_history');
+		$allstudentSession = $student->getSpentSessionTill($endSession);
+		$result = array();
+		foreach ($allstudentSession as $session){
+			$result[$session['session_name']]=$student->getTestData($session['ID'],$sessionTerm,$class,$type);
+		}
+		return $result;
+	}
+
+	public function getScoreFormatData($session,$sessionTerm,$level)
+	{
+		$result = array();
+		loadClass($this->load,'academic_session');
+		loadClass($this->load,'school_class');
+		loadClass($this->load,'subject');
+		if ($sessionTerm) {
+			loadClass($this->load,'term');
+			$term = new Term(array('ID'=>$sessionTerm));
+			$term->load();
+			$result['term']=strtoupper($term->term_name).' TERM ';
+		}
+
+		$subjectOffered = $this->subject->getSubjectOffered($session,$level,$sessionTerm);
+		loadClass($this->load,'student_biodata');
+
+		$students = $this->student_biodata->getStudentIn($level,$session);
+		$result['students']=$students;
+		$result['subjects']=$subjectOffered;
+		$result['session']=$this->academic_session->getWhere(array('ID'=>$session));
+		$result['level']=$this->school_class->getWhere(array('ID'=>$level));
+		$result['sessionTerm'] = $sessionTerm;
+
 		return $result;
 	}
 

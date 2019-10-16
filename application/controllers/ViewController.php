@@ -106,6 +106,11 @@ class ViewController extends CI_Controller{
       $path ='vc/admin/result_option';
     }
 
+    $report = array('exam_format','test_format');
+    if (in_array($page, $report)) {
+      $path ='vc/admin/spreadsheet_option';
+    }
+
     if (!$role->canView($path)) {
       show_access_denied();exit;
     }
@@ -201,9 +206,17 @@ class ViewController extends CI_Controller{
     }
   }
 
-  private function adminReport(&$data)
-  {
-    // this is to permit the guardian to access the report
+  private function findStudent($reg,$level,$session){
+    loadClass($this->load,'student_biodata');
+    $students = $reg?$this->student_biodata->getWhere(array('registration_number'=>$reg),$c,0,null,false):$this->student_biodata->getStudentIn($level,$session);
+    if ($students==false) {
+      $this->webSessionManager->setFlashMessage('message','can\'t find student records...');
+      header("Location:".base_url('vc/admin/spreadsheet_option'));exit;
+    }
+    return $students;
+  }
+
+  private function allowGuardian(){
     if ($this->webSessionManager->getCurrentUserProp('user_type')=='guardian') {
       $stdID=$this->webSessionManager->getCurrentUserProp('student_biodata_id');
       loadClass($this->load,'student_biodata');
@@ -212,10 +225,14 @@ class ViewController extends CI_Controller{
       $regNum = $this->student_biodata->registration_number;
       if (!$regNum) {
         $this->webSessionManager->setFlashMessage('message','we can\'t find student records');
-        header("Location:".base_url('vc/admin/result_option'));exit;
+        header("Location:".base_url('vc/admin/spreadsheet_option'));exit;
       }
       $_GET['reg'] = $regNum;
-    } // end guardian permission
+    }
+  }
+
+  private function validateReport(&$data){
+    $this->allowGuardian();
     $session = @$_GET['session'];
     $level = @$_GET['l'];
     $reg= @$_GET['reg'];
@@ -224,29 +241,58 @@ class ViewController extends CI_Controller{
       $this->webSessionManager->setFlashMessage('message','please select all necessary information to continue');
       header("Location:".base_url('vc/admin/result_option'));exit;
     }
-    loadClass($this->load,'student_biodata');
-    $students = $reg?$this->student_biodata->getWhere(array('registration_number'=>$reg),$c,0,null,false):$this->student_biodata->getStudentIn($level,$session);
-    if ($students==false) {
-      $this->webSessionManager->setFlashMessage('message','can\'t find student records...');
-      header("Location:".base_url('vc/admin/result_option'));exit;
-    }
+    $students = $this->findStudent($reg,$level,$session);
     $sess = (isset($_GET['session']) && $_GET['session'])?$_GET['session']:$this->webSessionManager->getCurrentSession();
     loadClass($this->load,'academic_session');
     $this->academic_session->ID=$sess;
     $this->academic_session->load();
     $data['currentSession']=$this->academic_session->session_name;
+    $data['sess'] = $sess;
+    $data['level'] = $level;
     $data['sessionTerm'] = $sessionTerm;
     $data['currentClass'] = $level;
     $data['totalStudent'] = $this->student_biodata->countGetStudentIn($level,$session);
+    return $students;
+  }
+
+  private function adminExam_format(&$data)
+  {
+    $students = $this->validateReport($data);
     loadClass($this->load,'signature');
     $data['signature'] = $this->signature->getSignature();
     $content=array();
+    if ($data['sessionTerm']) {
+     loadClass($this->load,'term');
+     $term = new Term(array('ID'=>$data['sessionTerm']));
+     $term->load();
+     $showMore=$term->is_last;
+     $data['is_last'] = $showMore;
+    }
     foreach ($students as $student) {
-      $content[]=array('student'=>$student,'report'=>$this->adminData->getStudentResultData($student,$sess,$sessionTerm,$level,$extraReport,$resultCount,$totalPercentage),'extraReport'=>@$extraReport,'resultCount'=>@$resultCount,'totalPercentage'=>@$totalPercentage);
+      $content[]=array('student'=>$student,'report'=>$this->adminData->getStudentResultData($student,$data['sess'],$data['sessionTerm'],$data['level'],$extraReport,$resultCount,$totalPercentage),'extraReport'=>@$extraReport,'resultCount'=>@$resultCount,'totalPercentage'=>@$totalPercentage);
     }
     // print_r($content);exit;
     $data['reports']=$content;
   }
+
+  private function adminTest_format(&$data)
+   {
+    if($students = $this->validateReport($data)){
+      $testType = @$_GET['test_type'];
+      foreach ($students as $student) {
+        $content[]=array('student'=>$student,'report'=>$this->adminData->getStudentTestData($student,$data['sess'],$data['sessionTerm'],$data['level'],$testType));
+      }
+      $data['reports']=$content;
+    }
+   }
+
+   private function adminScore_sheet(&$data)
+   {
+    $session = @$_GET['session'];
+    $level = @$_GET['l'];
+    $sessionTerm = @$_GET['sessionTerm'];
+    $data = array_merge($data,$this->adminData->getScoreFormatData($session,$sessionTerm,$level));
+   }
 
 
   private function adminUpload_history(&$data)

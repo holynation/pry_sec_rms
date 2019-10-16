@@ -299,8 +299,8 @@ public function getModules()
 				'Student Result'=>'vc/admin/student_result',
 				'Configure Report' => 'vc/add/configure_report',
 				'Head Signature' => 'vc/admin/signature',
-				'Student Report'=>'vc/admin/result_option'
-				
+				'Score Sheet' => 'vc/admin/score_option',
+				'Student Report'=>'vc/admin/spreadsheet_option'
 			)
 		)
 	);
